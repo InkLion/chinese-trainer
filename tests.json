@@ -1,0 +1,892 @@
+[
+  {
+    "name": "HSK 1 — базовые слова",
+    "questions": [
+      {
+        "prompt": "你好 (nǐ hǎo)",
+        "qtype": "choice",
+        "options": [
+          "привет",
+          "спасибо",
+          "до свидания",
+          "извините"
+        ],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "谢谢 (xiè xie)",
+        "qtype": "choice",
+        "options": [
+          "пожалуйста",
+          "спасибо",
+          "извините",
+          "привет"
+        ],
+        "correct": 1,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "再见 (zài jiàn)",
+        "qtype": "choice",
+        "options": [
+          "привет",
+          "спасибо",
+          "до свидания",
+          "как дела"
+        ],
+        "correct": 2,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "水 (shuǐ)",
+        "qtype": "choice",
+        "options": [
+          "огонь",
+          "вода",
+          "земля",
+          "дерево"
+        ],
+        "correct": 1,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "人 (rén)",
+        "qtype": "choice",
+        "options": [
+          "человек",
+          "небо",
+          "гора",
+          "рот"
+        ],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "朋友 (péng you)",
+        "qtype": "choice",
+        "options": [
+          "врач",
+          "учитель",
+          "друг",
+          "студент"
+        ],
+        "correct": 2,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      }
+    ]
+  },
+  {
+    "name": "Цифры",
+    "questions": [
+      {
+        "prompt": "Напишите число иероглифами: {{n:int:1..9999}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{n@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите число иероглифами: {{n:int:1..9999}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{n@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите число иероглифами: {{n:int:1..9999}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{n@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите число иероглифами: {{n:int:1..9999}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{n@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите число иероглифами: {{n:int:1..9999}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{n@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      }
+    ]
+  },
+  {
+    "name": "Время",
+    "questions": [
+      {
+        "prompt": "Который час? (12-часовой формат с частью дня) {{t:time:12}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{t:time:12@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Который час? (12-часовой формат с частью дня) {{t:time:12}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{t:time:12@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Который час? (12-часовой формат с частью дня) {{t:time:12}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{t:time:12@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Который час? (12-часовой формат с частью дня) {{t:time:12}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{t:time:12@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Который час? (12-часовой формат с частью дня) {{t:time:12}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{t:time:12@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      }
+    ]
+  },
+  {
+    "name": "Дата",
+    "questions": [
+      {
+        "prompt": "Напишите дату иероглифами: {{d:date:1900..2025}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{d@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите дату иероглифами: {{d:date:1900..2025}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{d@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите дату иероглифами: {{d:date:1900..2025}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{d@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите дату иероглифами: {{d:date:1900..2025}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{d@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Напишите дату иероглифами: {{d:date:1900..2025}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{d@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Соедините пары",
+        "qtype": "match",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [
+          [
+            "Суббота",
+            "星期六"
+          ],
+          [
+            "Воскресенье",
+            "星期天/星期日"
+          ],
+          [
+            "Неделя",
+            "星期"
+          ]
+        ],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      }
+    ]
+  },
+  {
+    "name": "Цвета",
+    "questions": [
+      {
+        "prompt": "Соедините пары",
+        "qtype": "match",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [
+          [
+            "Белый",
+            "白色"
+          ],
+          [
+            "Серый",
+            "灰色"
+          ],
+          [
+            "Бежевый",
+            "米色"
+          ],
+          [
+            "Черный",
+            "黑色"
+          ],
+          [
+            "Красный",
+            "红色"
+          ],
+          [
+            "Розовый",
+            "粉红色"
+          ]
+        ],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      }
+    ]
+  },
+  {
+    "name": "Обычная жизнь",
+    "questions": [
+      {
+        "prompt": "Переведи: 日常 生活 (rì cháng shēng huó)",
+        "qtype": "choice",
+        "options": [
+          "Обычная жизнь",
+          "Неделя",
+          "Учить китайский язык",
+          "Сколько сейчас времени"
+        ],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Обычный - rì cháng"
+      },
+      {
+        "prompt": "Частица для создания прилагательного",
+        "qtype": "choice",
+        "options": [
+          "de",
+          "me",
+          "ne",
+          "ni"
+        ],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Обычный   日常的   rì cháng de"
+      },
+      {
+        "prompt": "Переведи: 你几点起床？   nǐ jǐ diǎn qǐ shuáng",
+        "qtype": "choice",
+        "options": [
+          "Во сколько ты встаешь?",
+          "Сколько сейчас времени?",
+          "Какой день недели?",
+          "Когда ты завтракаешь?"
+        ],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "床 shuáng - кровать"
+      },
+      {
+        "prompt": "Заполните пропуски",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "我早上八点吃{}。",
+        "fill_answers": [
+          "早饭"
+        ],
+        "hint": "早上 - утро"
+      },
+      {
+        "prompt": "Заполните пропуски",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "我中午一点吃{}。",
+        "fill_answers": [
+          "午饭"
+        ],
+        "hint": "中午 - день"
+      },
+      {
+        "prompt": "Заполните пропуски",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "我晚上七点吃{}。",
+        "fill_answers": [
+          "晚饭"
+        ],
+        "hint": "晚上 - вечер"
+      },
+      {
+        "prompt": "Переведи: 吃饭",
+        "qtype": "choice",
+        "options": [
+          "Кушать",
+          "Идти",
+          "Учить",
+          "Вставать"
+        ],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "饭 - еда"
+      },
+      {
+        "prompt": "Сопоставь",
+        "qtype": "match",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [
+          [
+            "Идти на работу",
+            "上班"
+          ],
+          [
+            "Идти в школу",
+            "上学"
+          ],
+          [
+            "Идти",
+            "去"
+          ],
+          [
+            "Возвращаться домой",
+            "回家"
+          ],
+          [
+            "Школа",
+            "学校"
+          ],
+          [
+            "Учить",
+            "学习"
+          ],
+          [
+            "Ложиться спать",
+            "睡觉"
+          ]
+        ],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Переведи: китайский язык",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "中文 / 汉语",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Самый многочисленный народ Китая"
+      },
+      {
+        "prompt": "Заполните пропуски",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "我早上七点做{}。我上午十二点做{}。我晚上六点做{}。",
+        "fill_answers": [
+          "早饭",
+          "午饭",
+          "晚饭"
+        ],
+        "hint": ""
+      },
+      {
+        "prompt": "Переведи: Ты любишь смотреть телевизор",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "你喜欢看电视",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      }
+    ]
+  },
+  {
+    "name": "Мой прогресс (2 месяца)",
+    "questions": [
+      {
+        "prompt": "Как будет «Красный» (цвет)?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "红色",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Иероглиф «цвет» (色) + иероглиф «красный»"
+      },
+      {
+        "prompt": "Как будет «Старший брат»?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "哥哥",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Два одинаковых иероглифа подряд. Первый тон."
+      },
+      {
+        "prompt": "Как будет «Собака»?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "狗",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Ключ «животное» (犭) слева + 句 справа"
+      },
+      {
+        "prompt": "Как будет «Спать»?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "睡觉",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Первая часть — ключ «глаз» (目) и 垂 (свисать)"
+      },
+      {
+        "prompt": "Как будет «Вчера»?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "昨天",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "昨 (zuó) + 天 (день)"
+      },
+      {
+        "prompt": "Как будет «Готовить еду»?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "做饭",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "做 (делать) + 饭 (еда)"
+      },
+      {
+        "prompt": "Напишите число иероглифами: 15",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "十五",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Десятки + цифра"
+      },
+      {
+        "prompt": "Напишите число иероглифами: 101",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "一百零一",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Сотня + обязательно «ноль» (零) + единица"
+      },
+      {
+        "prompt": "Напишите число иероглифами: 110",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "一百一十 / 一百一",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Сотня + десять. В разговорной речи вторую «десятку» часто опускают."
+      },
+      {
+        "prompt": "Как сказать «два часа» (время)?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "两点",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Внимание! Исключение. Используем 两 вместо 二"
+      },
+      {
+        "prompt": "Как сказать «4:45»? (используйте слово «четверть»)",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "四点三刻",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Час + точка (点) + три (三) + четверть (刻)"
+      },
+      {
+        "prompt": "Как сказать «8:00 вечера»?",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "晚上八点",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Часть дня (вечер) + час + 点"
+      },
+      {
+        "prompt": "Соедините время суток и перевод",
+        "qtype": "match",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [
+          [
+            "早上",
+            "Утро (5:00 - 9:00)"
+          ],
+          [
+            "中午",
+            "Обед/Полдень"
+          ],
+          [
+            "下午",
+            "Днем"
+          ],
+          [
+            "晚上",
+            "Вечер"
+          ]
+        ],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Соедините членов семьи",
+        "qtype": "match",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [
+          [
+            "弟弟",
+            "Младший брат"
+          ],
+          [
+            "妹妹",
+            "Младшая сестра"
+          ],
+          [
+            "姐姐",
+            "Старшая сестра"
+          ],
+          [
+            "哥哥",
+            "Старший брат"
+          ]
+        ],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Соедините местоимения",
+        "qtype": "match",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [
+          [
+            "我",
+            "Я"
+          ],
+          [
+            "您",
+            "Вы (вежл.)"
+          ],
+          [
+            "他们",
+            "Они (муж.)"
+          ],
+          [
+            "她们",
+            "Они (жен.)"
+          ]
+        ],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": ""
+      },
+      {
+        "prompt": "Вставьте пропущенное слово (в/на):\nЯ в школе.",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "我{}学校。",
+        "fill_answers": [
+          "在"
+        ],
+        "hint": "Глагол-предлог «находиться в»"
+      },
+      {
+        "prompt": "Вставьте пропущенное слово (делать):\nЧто ты сейчас делаешь?",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "你{}做什么？",
+        "fill_answers": [
+          "在"
+        ],
+        "hint": "Указывает на действие в процессе прямо сейчас"
+      },
+      {
+        "prompt": "Вставьте пропущенные слова (приём пищи):\nВо сколько ты завтракаешь?",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "你几点{}早饭？",
+        "fill_answers": [
+          "吃"
+        ],
+        "hint": "Глагол «есть, кушать»"
+      },
+      {
+        "prompt": "Вставьте пропущенное слово (месяц):\nМой день рождения 15 июля.",
+        "qtype": "fill",
+        "options": [],
+        "correct": 0,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "我的生日是七{}十五号。",
+        "fill_answers": [
+          "月"
+        ],
+        "hint": "Иероглиф «луна» / «месяц»"
+      },
+      {
+        "prompt": "Какая часть дня используется для 12:00 - 14:00?",
+        "qtype": "choice",
+        "options": [
+          "早上",
+          "中午",
+          "下午",
+          "晚上"
+        ],
+        "correct": 1,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Время обеда"
+      },
+      {
+        "prompt": "Какой иероглиф означает «до свидания»?",
+        "qtype": "choice",
+        "options": [
+          "你好",
+          "谢谢",
+          "再见",
+          "不客气"
+        ],
+        "correct": 2,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Буквально «снова увидеться»"
+      },
+      {
+        "prompt": "Как спросить «Сколько тебе лет?» (для сверстника)?",
+        "qtype": "choice",
+        "options": [
+          "你姓什么？",
+          "你叫什么名字？",
+          "你几岁？",
+          "你多大了？"
+        ],
+        "correct": 2,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Используется иероглиф «岁» (год жизни)"
+      },
+      {
+        "prompt": "Выберите правильный перевод: «Он мой младший брат»",
+        "qtype": "choice",
+        "options": [
+          "他是我的哥哥",
+          "她是我的妹妹",
+          "他是我的弟弟",
+          "她是我的姐姐"
+        ],
+        "correct": 2,
+        "answer": "",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Он (他) + младший брат (弟弟)"
+      },
+      {
+        "prompt": "Переведите на арабские цифры: {{n:int:1..99@cn}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{n}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Сначала десятки, потом единицы"
+      },
+      {
+        "prompt": "Напишите время иероглифами: {{t:time:12}}",
+        "qtype": "input",
+        "options": [],
+        "correct": 0,
+        "answer": "{{t:time:12@cn}}",
+        "pairs": [],
+        "fill_text": "",
+        "fill_answers": [],
+        "hint": "Не забудьте часть дня, а также правило для 2 часов (два = 两)"
+      }
+    ]
+  }
+]

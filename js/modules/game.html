@@ -1,0 +1,157 @@
+<!-- ================= SETUP ================= -->
+<div id="setup" class="screen">
+  <h1>汉语 大冒险</h1>
+  <div class="subtitle">Настольная игра по китайскому · push-your-luck · 2–6 игроков</div>
+
+  <div class="card">
+    <label class="field">
+      <span>Сколько игроков?</span>
+      <select id="playerCount">
+        <option>2</option><option>3</option><option>4</option>
+        <option>5</option><option>6</option>
+      </select>
+    </label>
+    <div id="nameInputs" class="names"></div>
+
+    <div class="settings-grid">
+      <label class="field">
+        <span>Длина поля:</span>
+        <select id="boardSize">
+          <option value="10">10 клеток</option>
+          <option value="15" selected>15 клеток</option>
+          <option value="20">20 клеток</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Таймер:</span>
+        <input type="checkbox" id="timerOn" checked>
+        <select id="timerSec">
+          <option value="15">15 с</option>
+          <option value="25" selected>25 с</option>
+          <option value="40">40 с</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Спецклетки:</span>
+        <input type="checkbox" id="specialOn" checked>
+      </label>
+      <label class="field">
+        <span>Подсказки:</span>
+        <input type="checkbox" id="lifelineOn" checked>
+      </label>
+    </div>
+
+    <div class="task-types">
+      <span>Типы заданий:</span>
+      <label><input type="checkbox" data-type="choice" checked> Выбор</label>
+      <label><input type="checkbox" data-type="image" checked> Картинки</label>
+      <label><input type="checkbox" data-type="fill" checked> Пропуски</label>
+      <label><input type="checkbox" data-type="match" checked> Пары</label>
+      <label><input type="checkbox" data-type="order" checked> Предложения</label>
+    </div>
+
+    <div class="task-types">
+      <span>Темы:</span>
+      <label><input type="checkbox" data-topic="greetings"    checked> Приветствия</label>
+      <label><input type="checkbox" data-topic="acquaintance" checked> Знакомство</label>
+      <label><input type="checkbox" data-topic="pronouns"     checked> Местоимения</label>
+      <label><input type="checkbox" data-topic="family"       checked> Семья</label>
+      <label><input type="checkbox" data-topic="numbers"      checked> Цифры</label>
+      <label><input type="checkbox" data-topic="time"         checked> Время</label>
+      <label><input type="checkbox" data-topic="date"         checked> Дата</label>
+      <label><input type="checkbox" data-topic="daily"        checked> Обычная жизнь</label>
+      <label><input type="checkbox" data-topic="colors"       checked> Цвета</label>
+      <label><input type="checkbox" data-topic="pinyin"       checked> Пиньинь и тоны</label>
+      <button type="button" id="allTopicsBtn">Все</button>
+      <button type="button" id="noneTopicsBtn">Снять</button>
+    </div>
+
+    <button id="startBtn" class="primary">Начать игру</button>
+    <div id="loadErr" class="err hidden">
+      Не удалось загрузить задания. Убедитесь, что <b>tasks.js</b> лежит рядом.
+    </div>
+  </div>
+
+  <div class="card rules">
+    <h3>Правила</h3>
+    <ul>
+      <li>Бросок кубика (1–6) — это <b>сколько вопросов</b> доступно за ход, а не шаги.</li>
+      <li><b>Каждый верный ответ</b> — +1 клетка в копилку и +1 балл. Фишка пока стоит на месте.</li>
+      <li><b>Неверный ответ</b> — клетки, накопленные <b>в этом ходу</b>, сгорают, ход заканчивается. Уже зафиксированный прогресс не теряется.</li>
+      <li>После любого верного ответа можно <b>«Зафиксировать»</b> — переставить фишку на накопленные клетки и завершить ход. Или рискнуть и продолжить.</li>
+      <li>Если вопросы из броска закончились — прогресс фиксируется автоматически.</li>
+      <li>Серия из <b>3 верных подряд</b> даёт +1 бонусный балл.</li>
+      <li>Спецклетки (приземление): 🎁 +1 балл · 💀 −1 балл · ⭐ +2 балла · 🌀 +1 клетка.</li>
+      <li>Финиш: <b>+10 / +5 / +2</b> балла за 1-е / 2-е / 3-е место. Финишировавший выходит из игры.</li>
+      <li>Игра заканчивается, когда <b>все</b> дошли до финиша. Побеждает набравший больше всех баллов.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= GAME ================= -->
+<div id="game" class="screen hidden">
+  <div class="topbar">
+    <div id="turnInfo"></div>
+    <button id="quitBtn">↺ Новая игра</button>
+  </div>
+
+  <div class="layout">
+    <div>
+      <div id="startZone">
+        <span class="label">СТАРТ</span>
+        <div class="tokens" id="startTokens"></div>
+      </div>
+      <div id="board"></div>
+    </div>
+
+    <div>
+      <div class="panel">
+        <h3>Игроки</h3>
+        <div id="scoreboard"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Ход</h3>
+        <div id="diceBox">
+          <div id="dice">?</div>
+          <button id="rollBtn">Бросить кубик</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Журнал</h3>
+        <div id="log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: ЗАДАНИЕ ================= -->
+<div id="modal" class="overlay hidden">
+  <div class="modal-card">
+    <button id="giveUpBtn" style="position: absolute; top: 16px; right: 16px; padding: 6px 12px; font-size: 14px; background: rgba(255, 138, 138, 0.1); border: 1px solid rgba(255, 138, 138, 0.3); border-radius: 8px; color: #ff8a8a; cursor: pointer; transition: 0.2s;" title="Завершить ход (очки в этом ходу сгорят)">🏳️ Сдаться</button>
+    <div id="timerWrap" class="timer-wrap hidden">
+      <div id="timerFill" class="timer-fill"></div>
+    </div>
+    <div class="q-head">
+      <span class="q-player" id="qPlayer"></span>
+      <span class="q-label"><span id="qType"></span><span id="timerText" class="timer-text"></span></span>
+    </div>
+    <div id="qBody"></div>
+    <div id="lifelines" class="lifelines hidden"></div>
+    <div class="feedback" id="qFeedback"></div>
+    <div id="choiceBtns" class="choice-btns hidden">
+      <button id="continueBtn" class="primary">Продолжить</button>
+      <button id="lockInBtn">Зафиксировать</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= MODAL: КОНЕЦ ================= -->
+<div id="endModal" class="overlay hidden">
+  <div class="modal-card">
+    <h2 style="margin:0;color:#f4c430;">🏆 Игра окончена</h2>
+    <div id="endBody"></div>
+    <button class="primary" onclick="location.reload()">Играть снова</button>
+  </div>
+</div>
