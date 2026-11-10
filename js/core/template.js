@@ -80,7 +80,7 @@ function formatTimeCn(hour, minute, mode = "24") {
     h = hour12(hour);
   }
 
-  let s = prefix + toCnNumber(h) + "点";
+  let s = prefix + (h === 2 ? "两" : toCnNumber(h)) + "点";
   if (minute === 0) {
     // ничего не добавляем
   } else if (minute === 30) {
