@@ -275,25 +275,34 @@ const ruMonths = ['января', 'февраля', 'марта', 'апреля'
 const cnDigits = ['零', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
 
 function numToChinese(num) {
-  if (num < 10) return cnDigits[num];
-  if (num === 10) return '十';
-  if (num < 20) return '十' + cnDigits[num % 10];
-  if (num < 100) {
-    const tens = Math.floor(num / 10);
-    const ones = num % 10;
-    return cnDigits[tens] + '十' + (ones === 0 ? '' : cnDigits[ones]);
-  }
-  if (num < 1000) {
-    const hundreds = Math.floor(num / 100);
-    const rest = num % 100;
-    let res = cnDigits[hundreds] + '百';
-    if (rest > 0) {
-      if (rest < 10) res += '零' + cnDigits[rest];
-      else res += numToChinese(rest);
+  const CN_DIGITS = "零一二三四五六七八九";
+  if (num === 0) return "零";
+  if (num < 10) return CN_DIGITS[num];
+  if (num < 20) return "十" + (num % 10 === 0 ? "" : CN_DIGITS[num % 10]);
+
+  let result = "";
+  let zeroPending = false;
+  let n = num;
+
+  const units = [
+    { val: 1000, char: "千" },
+    { val: 100, char: "百" },
+    { val: 10, char: "十" },
+    { val: 1, char: "" }
+  ];
+
+  for (const { val, char } of units) {
+    const d = Math.floor(n / val);
+    if (d > 0) {
+      if (zeroPending && result) result += "零";
+      result += CN_DIGITS[d] + char;
+      zeroPending = false;
+    } else if (result) {
+      zeroPending = true;
     }
-    return res;
+    n %= val;
   }
-  return '千';
+  return result;
 }
 
 function genNumbers() {
