@@ -84,7 +84,7 @@ function generateBoard() {
     return {
       id: topicId,
       name: TOPICS[topicId] || topicId,
-      questions: questions.map((q, i) => ({ ...q, value: POINTS[i] }))
+      questions: questions.map((q, i) => ({ ...q, value: POINTS[i], isAnswered: false }))
     };
   });
 
@@ -107,12 +107,21 @@ function renderBoard() {
   for (let row = 0; row < ROWS; row++) {
     for (let col = 0; col < COLS; col++) {
       const q = boardData[col].questions[row];
-      cellsHtml += `
-        <button class="jeopardy-cell" data-col="${col}" data-row="${row}" 
-          style="background: #2c1533; border: 1px solid var(--border); color: #fff; font-size: 24px; font-weight: bold; padding: 20px 10px; border-radius: 10px; cursor: pointer; transition: 0.2s;">
-          ${q.value}
-        </button>
-      `;
+      
+      // Если вопрос уже сыгран, рисуем пустую прозрачную клетку
+      if (q.isAnswered) {
+        cellsHtml += `
+          <div style="background: transparent; border: 1px solid rgba(255,255,255,0.05); padding: 20px 10px; border-radius: 10px;"></div>
+        `;
+      } else {
+        // Иначе рисуем активную кнопку
+        cellsHtml += `
+          <button class="jeopardy-cell" data-col="${col}" data-row="${row}" 
+            style="background: #2c1533; border: 1px solid var(--border); color: #fff; font-size: 24px; font-weight: bold; padding: 20px 10px; border-radius: 10px; cursor: pointer; transition: 0.2s;">
+            ${q.value}
+          </button>
+        `;
+      }
     }
   }
 
@@ -215,16 +224,13 @@ function openQuestion(q, cellBtn) {
       closeBtn.textContent = 'Продолжить';
       closeBtn.onclick = () => {
         modal.remove();
-        cellBtn.style.background = 'transparent';
-        cellBtn.style.borderColor = 'transparent';
-        cellBtn.style.color = 'transparent';
-        cellBtn.style.pointerEvents = 'none';
+        
+        q.isAnswered = true;
         
         answeredCount++;
         if (answeredCount === COLS * ROWS) {
           setTimeout(() => showEndScreen(), 300);
         } else {
-          // Перерисовываем интерфейс, чтобы обновить счет и подсветку хода
           renderBoard(); 
         }
       };
