@@ -1,19 +1,19 @@
-import { init as gameInit } from './modules/game.js';
+// Убрали импорт gameInit, так как скрываем игру
 import { init as testsInit } from './modules/tests.js';
 import { init as jeopardyInit } from './modules/jeopardy.js';
-import { init as profileInit } from './modules/profile.js'; // НОВЫЙ ИМПОРТ
-import { getCurrentUser, logout } from './core/storage.js'; // НОВЫЙ ИМПОРТ
+import { init as profileInit } from './modules/profile.js';
+import { getCurrentUser, logout } from './core/storage.js';
 
 const app = document.getElementById('app');
 const nav = document.getElementById('app-nav');
-const userBar = document.getElementById('user-bar'); // Элемент в шапке
+const userBar = document.getElementById('user-bar');
 
 const routes = {
   '':         homeView,
   'login':    profileInit,
-  'game':     gameInit,
   'tests':    testsInit,
   'jeopardy': jeopardyInit,
+  // 'game':  gameInit,  <-- ИГРА ОТКЛЮЧЕНА
 };
 
 let currentCleanup = null;
@@ -29,15 +29,23 @@ function homeView(container) {
   `;
 }
 
+function notReady(container) {
+  container.innerHTML = `
+    <div class="card">
+      <h1>Скоро</h1>
+      <p class="subtitle">Этот модуль в разработке.</p>
+    </div>
+  `;
+}
+
 async function route() {
   const myId = ++navId;
   const hash = location.hash.replace(/^#\/?/, '');
   const name = hash.split('/')[0];
 
-  // ПРОВЕРКА АВТОРИЗАЦИИ
   const user = getCurrentUser();
   if (!user && name !== 'login') {
-    window.location.hash = '#/login'; // Принудительный редирект
+    window.location.hash = '#/login';
     return;
   }
 
@@ -49,7 +57,6 @@ async function route() {
   const container = document.createElement('div');
   app.replaceChildren(container);
 
-  // Обновляем шапку
   if (user) {
     userBar.innerHTML = `
       <span style="color: var(--gold); font-weight: bold; margin-right: 10px;">👤 ${user}</span>
@@ -60,17 +67,19 @@ async function route() {
       window.location.hash = '#/login';
       window.location.reload();
     });
-    nav.style.display = 'flex'; // Показываем меню, если залогинен
+    nav.style.display = 'flex';
   } else {
     userBar.innerHTML = '';
-    nav.style.display = 'none'; // Скрываем меню на экране входа
+    nav.style.display = 'none';
   }
 
   [...nav.querySelectorAll('a')].forEach(a => {
     a.classList.toggle('active', a.getAttribute('href') === '#/' + name);
   });
 
-  const view = routes[name] || homeView;
+  // Если кто-то вручную введет #/game, покажем заглушку
+  const view = routes[name] || (name === 'game' ? notReady : homeView);
+  
   let result;
   try {
     result = await view(container);
@@ -88,5 +97,8 @@ async function route() {
   currentCleanup = typeof result === 'function' ? result : null;
 }
 
-window.addEventListener('hashchange', route);
-window.addEventListener('DOMContentLoaded', route);
+// ФИКС ОШИБКИ startTime:
+// Оборачиваем в setTimeout, чтобы браузер сначала завершил 
+// свои внутренние процессы клика, а потом мы меняли DOM.
+window.addEventListener('hashchange', () => setTimeout(route, 0));
+window.addEventListener('DOMContentLoaded', () => setTimeout(route, 0));
