@@ -30,13 +30,21 @@ export const TASKS = [
   { topic: "greetings", type: "choice", q: "Что означает 生日?", answer: "День рождения", options: ["Праздник", "Выходной", "Новый год"] },
   { topic: "greetings", type: "choice", q: "Когда твой день рождения?", answer: "你的生日是几月几号？", options: ["今天几月几号？", "你叫什么名字？", "你几岁？"] },
   { topic: "greetings", type: "choice", q: "Как твоя фамилия?", answer: "你姓什么？", options: ["你叫什么名字？", "你多大了？", "你几岁？"] },
-  { topic: "greetings", type: "choice", q: "Что означает 你多大了？", answer: "Сколько тебе лет?", options: ["Как тебя зовут?", "Какая у тебя фамилия?", "Как дела?"] },
-  { topic: "greetings", type: "choice", q: "Что означает 你几岁？", answer: "Сколько тебе лет?", options: ["Как тебя зовут?", "Какая у тебя фамилия?", "Который час?"] },
-  { topic: "greetings", type: "fill", q: "Вставьте пропуск:<br>你<span class=\"blank\"></span>什么名字？", answers: ["叫"], placeholder: "один иероглиф" },
-  { topic: "greetings", type: "fill", q: "Вставьте пропуск:<br>我<span class=\"blank\"></span>中国人。", answers: ["是"], placeholder: "один иероглиф" },
-  { topic: "greetings", type: "fill", q: "Напишите иероглифами: «Приятно познакомиться»", answers: ["很高兴认识你"], placeholder: "иероглифы" },
-  { topic: "greetings", type: "order", q: "Соберите: «Приятно познакомиться»", words: ["认识", "很", "你", "高兴"], answer: ["很", "高兴", "认识", "你"] },
+  { topic: "greetings", type: "choice", q: "Сколько тебе лет? (вежливо)", answer: "你多大了？", options: ["你几岁？", "你姓什么？", "你叫什么名字？"] },
+  { topic: "greetings", type: "choice", q: "Сколько тебе лет? (для сверстника)", answer: "你几岁？", options: ["你多大了？", "你姓什么？", "你叫什么名字？"] },
+  
+  // Заполнение пропусков
+  { topic: "greetings", type: "fill", q: "Вставьте пропуск (глагол «звать»):<br>你<span class=\"blank\"></span>什么名字？", answers: ["叫"], placeholder: "один иероглиф" },
+  { topic: "greetings", type: "fill", q: "Вставьте пропуск (фамилия):<br>你<span class=\"blank\"></span>什么？", answers: ["姓"], placeholder: "один иероглиф" },
+  { topic: "greetings", type: "fill", q: "Вставьте пропуск:<br>我很高兴<span class=\"blank\"></span>识你。", answers: ["认"], placeholder: "один иероглиф" },
+  
+  // Составление предложений
+  { topic: "greetings", type: "order", q: "Соберите: «Как тебя зовут?»", words: ["名字", "你", "什么", "叫"], answer: ["你", "叫", "什么", "名字"] },
   { topic: "greetings", type: "order", q: "Соберите: «Меня зовут...»", words: ["叫", "我"], answer: ["我", "叫"] },
+  { topic: "greetings", type: "order", q: "Соберите: «Приятно познакомиться»", words: ["认识", "很", "你", "高兴"], answer: ["很", "高兴", "认识", "你"] },
+  { topic: "greetings", type: "order", q: "Соберите: «Как твоя фамилия?»", words: ["什么", "你", "姓"], answer: ["你", "姓", "什么"] },
+  { topic: "greetings", type: "order", q: "Соберите: «Когда твой день рождения?»", words: ["几月几号", "你", "生日", "的", "是"], answer: ["你", "的", "生日", "是", "几月几号"] },
+  
   { topic: "greetings", type: "match", q: "Соедините приветствия", pairs: [["你好", "Привет"], ["您好", "Здравствуйте"], ["早上好", "Доброе утро"], ["晚上好", "Добрый вечер"]] },
 
   /* ═════════════════ МЕСТОИМЕНИЯ ═════════════════ */
@@ -50,10 +58,14 @@ export const TASKS = [
   { topic: "pronouns", type: "choice", q: "Что означает 你们?", answer: "Вы (мн.ч.)", options: ["Мы", "Они", "Ты"] },
   { topic: "pronouns", type: "choice", q: "Что означает 他们?", answer: "Они (мужчины)", options: ["Мы", "Вы", "Они (женщины)"] },
   { topic: "pronouns", type: "choice", q: "Что означает 她们?", answer: "Они (женщины)", options: ["Мы", "Вы", "Они (мужчины)"] },
+  
   { topic: "pronouns", type: "fill", q: "Напишите иероглифами: «мы»", answers: ["我们"], placeholder: "иероглифы" },
-  { topic: "pronouns", type: "fill", q: "Напишите пиньинь для 我们", answers: ["women"], placeholder: "пиньинь без тонов" },
-  { topic: "pronouns", type: "match", q: "Соедините местоимения", pairs: [["我", "Я"], ["您", "Вы"], ["他们", "Они (м.)"], ["她们", "Они (ж.)"]] },
+  { topic: "pronouns", type: "fill", q: "Вставьте пропуск (множественное число):<br>你<span class=\"blank\"></span>好！", answers: ["们"], placeholder: "один иероглиф" },
+  
   { topic: "pronouns", type: "order", q: "Соберите: «Я в школе»", words: ["学校", "我", "在"], answer: ["我", "在", "学校"] },
+  { topic: "pronouns", type: "order", q: "Соберите: «Он мой старший брат»", words: ["哥哥", "他", "我", "是", "的"], answer: ["他", "是", "我", "的", "哥哥"] },
+  
+  { topic: "pronouns", type: "match", q: "Соедините местоимения", pairs: [["我", "Я"], ["您", "Вы"], ["他们", "Они (м.)"], ["她们", "Они (ж.)"]] },
 
   /* ═════════════════ СЕМЬЯ ═════════════════ */
   { topic: "family", type: "choice", q: "Что означает 哥哥?", answer: "Старший брат", options: ["Младший брат", "Старшая сестра", "Младшая сестра"] },
@@ -61,13 +73,15 @@ export const TASKS = [
   { topic: "family", type: "choice", q: "Что означает 姐姐?", answer: "Старшая сестра", options: ["Младшая сестра", "Старший брат", "Младший брат"] },
   { topic: "family", type: "choice", q: "Что означает 妹妹?", answer: "Младшая сестра", options: ["Старшая сестра", "Старший брат", "Младший брат"] },
   { topic: "family", type: "choice", q: "Что означает 宝贝?", answer: "Ребёнок", options: ["Взрослый", "Бабушка", "Дядя"] },
-  { topic: "family", type: "choice", q: "Он мой старший брат", answer: "他是我的哥哥", options: ["她是我的姐姐", "他是我的弟弟", "她是我的妹妹"] },
-  { topic: "family", type: "choice", q: "Она моя младшая сестра", answer: "她是我的妹妹", options: ["他是我的弟弟", "她是我的姐姐", "他是我的哥哥"] },
+  
   { topic: "family", type: "fill", q: "Напишите иероглифами: «старший брат»", answers: ["哥哥"], placeholder: "иероглифы" },
   { topic: "family", type: "fill", q: "Напишите иероглифами: «младшая сестра»", answers: ["妹妹"], placeholder: "иероглифы" },
-  { topic: "family", type: "match", q: "Соедините членов семьи", pairs: [["哥哥", "Старший брат"], ["弟弟", "Младший брат"], ["姐姐", "Старшая сестра"], ["妹妹", "Младшая сестра"]] },
+  
   { topic: "family", type: "order", q: "Соберите: «Он мой младший брат»", words: ["弟弟", "他", "我", "是", "的"], answer: ["他", "是", "我", "的", "弟弟"] },
   { topic: "family", type: "order", q: "Соберите: «Она моя старшая сестра»", words: ["姐姐", "她", "我", "是", "的"], answer: ["她", "是", "我", "的", "姐姐"] },
+  { topic: "family", type: "order", q: "Соберите: «Она моя младшая сестра»", words: ["妹妹", "她", "我", "是", "的"], answer: ["她", "是", "我", "的", "妹妹"] },
+  
+  { topic: "family", type: "match", q: "Соедините членов семьи", pairs: [["哥哥", "Старший брат"], ["弟弟", "Младший брат"], ["姐姐", "Старшая сестра"], ["妹妹", "Младшая сестра"]] },
 
   /* ═════════════════ ВРЕМЯ ═════════════════ */
   { topic: "time", type: "choice", q: "Что означает 时间?", answer: "Время", options: ["Час", "Минута", "День"] },
@@ -88,12 +102,17 @@ export const TASKS = [
   { topic: "time", type: "choice", q: "Что означает 下午?", answer: "Днем (14:00-18:00)", options: ["Утро (5:00-9:00)", "Обед (12:00-14:00)", "Вечер (18:00-0:00)"] },
   { topic: "time", type: "choice", q: "Что означает 晚上?", answer: "Вечер (18:00-0:00)", options: ["Днем (14:00-18:00)", "Ночь (0:00-5:00)", "Утро (5:00-9:00)"] },
   { topic: "time", type: "choice", q: "Что означает 夜里?", answer: "Ночь (0:00-5:00)", options: ["Вечер (18:00-0:00)", "Утро (5:00-9:00)", "Обед (12:00-14:00)"] },
+  
   { topic: "time", type: "fill", q: "Напишите иероглифами: «половина»", answers: ["半"], placeholder: "иероглиф" },
   { topic: "time", type: "fill", q: "Напишите иероглифами: «четверть»", answers: ["刻"], placeholder: "иероглиф" },
+  { topic: "time", type: "fill", q: "Вставьте пропуск (два часа):<br>现在<span class=\"blank\"></span>点。", answers: ["两"], placeholder: "один иероглиф" },
   { topic: "time", type: "fill", q: "Напишите пиньинь для 时间", answers: ["shijian"], placeholder: "пиньинь без тонов" },
+  
+  { topic: "time", type: "order", q: "Соберите: «Сейчас сколько времени?»", words: ["点", "现在", "几"], answer: ["现在", "几", "点"] },
+  { topic: "time", type: "order", q: "Соберите: «Сейчас 3 часа 15 минут»", words: ["一刻", "现在", "三点"], answer: ["现在", "三点", "一刻"] },
+  
   { topic: "time", type: "match", q: "Соедините части суток", pairs: [["早上", "Утро"], ["中午", "Обед"], ["下午", "Днем"], ["晚上", "Вечер"]] },
   { topic: "time", type: "match", q: "Соедините время", pairs: [["一点", "1:00"], ["两点", "2:00"], ["三点", "3:00"], ["四点", "4:00"]] },
-  { topic: "time", type: "order", q: "Соберите: «Сейчас сколько времени?»", words: ["点", "现在", "几"], answer: ["现在", "几", "点"] },
 
   /* ═════════════════ ДАТА ═════════════════ */
   { topic: "date", type: "choice", q: "Что означает 日期?", answer: "Дата", options: ["Год", "Месяц", "День"] },
@@ -115,14 +134,19 @@ export const TASKS = [
   { topic: "date", type: "choice", q: "Что означает 喜欢?", answer: "Нравится", options: ["Не нравится", "Любить (еду)", "Хотеть"] },
   { topic: "date", type: "choice", q: "Какой день недели тебе нравится?", answer: "你喜欢星期几？", options: ["今天几月几号？", "你叫什么名字？", "现在几点？"] },
   { topic: "date", type: "choice", q: "Мне нравится суббота", answer: "我喜欢星期六", options: ["我喜欢星期天", "我不喜欢星期六", "今天是星期六"] },
+  
   { topic: "date", type: "fill", q: "Напишите иероглифами: «сегодня»", answers: ["今天"], placeholder: "иероглифы" },
   { topic: "date", type: "fill", q: "Напишите иероглифами: «завтра»", answers: ["明天"], placeholder: "иероглифы" },
   { topic: "date", type: "fill", q: "Напишите иероглифами: «вчера»", answers: ["昨天"], placeholder: "иероглифы" },
   { topic: "date", type: "fill", q: "Напишите иероглифами: «неделя»", answers: ["星期"], placeholder: "иероглифы" },
   { topic: "date", type: "fill", q: "Напишите пиньинь для 今天", answers: ["jintian"], placeholder: "пиньинь без тонов" },
+  
+  { topic: "date", type: "order", q: "Соберите: «Какое сегодня число?»", words: ["几号", "今天", "几月"], answer: ["今天", "几月", "几号"] },
+  { topic: "date", type: "order", q: "Соберите: «Мне нравится суббота»", words: ["星期六", "我", "喜欢"], answer: ["我", "喜欢", "星期六"] },
+  { topic: "date", type: "order", q: "Соберите: «Какой день недели тебе нравится?»", words: ["星期几", "你", "喜欢"], answer: ["你", "喜欢", "星期几"] },
+  
   { topic: "date", type: "match", q: "Соедините дни", pairs: [["星期一", "Понедельник"], ["星期三", "Среда"], ["星期六", "Суббота"], ["星期天", "Воскресенье"]] },
   { topic: "date", type: "match", q: "Соедините месяцы", pairs: [["一月", "Январь"], ["六月", "Июнь"], ["十月", "Октябрь"], ["十二月", "Декабрь"]] },
-  { topic: "date", type: "order", q: "Соберите: «Какое сегодня число?»", words: ["几号", "今天", "几月"], answer: ["今天", "几月", "几号"] },
 
   /* ═════════════════ ОБЫЧНАЯ ЖИЗНЬ ═════════════════ */
   { topic: "daily", type: "choice", q: "Что означает 日常生活?", answer: "Обычная жизнь", options: ["Выходной день", "Рабочий день", "Праздник"] },
@@ -163,11 +187,13 @@ export const TASKS = [
   { topic: "daily", type: "choice", q: "Что означает 不好意思?", answer: "Извините", options: ["Спасибо", "Пожалуйста", "Спокойной ночи"] },
   { topic: "daily", type: "choice", q: "Что означает 没事?", answer: "Ничего страшного", options: ["Извините", "Спасибо", "До свидания"] },
   { topic: "daily", type: "choice", q: "Что означает 晚安?", answer: "Спокойной ночи", options: ["Доброе утро", "Добрый вечер", "До свидания"] },
+  
   { topic: "daily", type: "image", emoji: "🐱", q: "Что это по-китайски?", answer: "猫", options: ["狗", "花", "杯子"] },
   { topic: "daily", type: "image", emoji: "🐶", q: "Что это по-китайски?", answer: "狗", options: ["猫", "花", "本子"] },
   { topic: "daily", type: "image", emoji: "🌸", q: "Что это по-китайски?", answer: "花", options: ["猫", "狗", "杯子"] },
   { topic: "daily", type: "image", emoji: "☕", q: "Что это по-китайски?", answer: "杯子", options: ["本子", "花", "猫"] },
   { topic: "daily", type: "image", emoji: "📓", q: "Что это по-китайски?", answer: "本子", options: ["杯子", "花", "狗"] },
+  
   { topic: "daily", type: "fill", q: "Напишите иероглифами: «школа»", answers: ["学校"], placeholder: "иероглифы" },
   { topic: "daily", type: "fill", q: "Напишите иероглифами: «учиться»", answers: ["学习"], placeholder: "иероглифы" },
   { topic: "daily", type: "fill", q: "Напишите иероглифами: «идти»", answers: ["去"], placeholder: "иероглиф" },
@@ -175,16 +201,30 @@ export const TASKS = [
   { topic: "daily", type: "fill", q: "Напишите иероглифами: «работать»", answers: ["工作"], placeholder: "иероглифы" },
   { topic: "daily", type: "fill", q: "Напишите иероглифами: «спать»", answers: ["睡觉"], placeholder: "иероглифы" },
   { topic: "daily", type: "fill", q: "Напишите иероглифами: «вставать»", answers: ["起床"], placeholder: "иероглифы" },
+  
   { topic: "daily", type: "fill", q: "Вставьте пропуск:<br>我<span class=\"blank\"></span>学校。", answers: ["在"], placeholder: "один иероглиф" },
   { topic: "daily", type: "fill", q: "Вставьте пропуск:<br>我<span class=\"blank\"></span>学习中文。", answers: ["在"], placeholder: "один иероглиф" },
   { topic: "daily", type: "fill", q: "Вставьте пропуск:<br>你<span class=\"blank\"></span>做什么？", answers: ["在"], placeholder: "один иероглиф" },
-  { topic: "daily", type: "match", q: "Соедините действия", pairs: [["起床", "Вставать"], ["吃饭", "Есть"], ["睡觉", "Спать"], ["工作", "Работать"]] },
-  { topic: "daily", type: "match", q: "Соедините предметы", pairs: [["猫", "Кот"], ["狗", "Собака"], ["花", "Цветок"], ["杯子", "Кружка"]] },
-  { topic: "daily", type: "match", q: "Соедините приёмы пищи", pairs: [["吃早饭", "Завтракать"], ["吃午饭", "Обедать"], ["吃晚饭", "Ужинать"], ["做饭", "Готовить"]] },
+  { topic: "daily", type: "fill", q: "Вставьте пропуск (частица прилагательного):<br>日 常<span class=\"blank\"></span> 生 活", answers: ["的"], placeholder: "один иероглиф" },
+  
   { topic: "daily", type: "order", q: "Соберите: «Я в школе»", words: ["学校", "我", "在"], answer: ["我", "在", "学校"] },
   { topic: "daily", type: "order", q: "Соберите: «Я сейчас учу китайский»", words: ["中文", "我", "学习", "在"], answer: ["我", "在", "学习", "中文"] },
   { topic: "daily", type: "order", q: "Соберите: «Что ты сейчас делаешь?»", words: ["什么", "你", "做", "在"], answer: ["你", "在", "做", "什么"] },
   { topic: "daily", type: "order", q: "Соберите: «Я сейчас в...»", words: ["在", "我", "现在"], answer: ["我", "现在", "在"] },
+  { topic: "daily", type: "order", q: "Соберите: «Во сколько ты встаешь?»", words: ["起床", "你", "几", "点"], answer: ["你", "几", "点", "起床"] },
+  { topic: "daily", type: "order", q: "Соберите: «Я встаю в 7 часов»", words: ["起床", "我", "七点"], answer: ["我", "七点", "起床"] },
+  { topic: "daily", type: "order", q: "Соберите: «Во сколько ты завтракаешь?»", words: ["早饭", "你", "几", "点", "吃"], answer: ["你", "几", "点", "吃", "早饭"] },
+  { topic: "daily", type: "order", q: "Соберите: «Я в 8 часов ем завтрак»", words: ["早饭", "我", "八点", "吃"], answer: ["我", "八点", "吃", "早饭"] },
+  { topic: "daily", type: "order", q: "Соберите: «Когда ты идешь в школу?»", words: ["上学", "你", "几", "点"], answer: ["你", "几", "点", "上学"] },
+  { topic: "daily", type: "order", q: "Соберите: «Я иду на работу»", words: ["上班", "我", "去"], answer: ["我", "去", "上班"] },
+  { topic: "daily", type: "order", q: "Соберите: «Когда ты возвращаешься домой?»", words: ["回家", "你", "几", "点"], answer: ["你", "几", "点", "回家"] },
+  { topic: "daily", type: "order", q: "Соберите: «Я готовлю еду»", words: ["做饭", "我", "在"], answer: ["我", "在", "做饭"] },
+  { topic: "daily", type: "order", q: "Соберите: «Я делаю домашнее задание»", words: ["做作业", "我", "在"], answer: ["我", "在", "做作业"] },
+  { topic: "daily", type: "order", q: "Соберите: «Я смотрю телевизор»", words: ["看电视", "我", "在"], answer: ["我", "在", "看电视"] },
+  
+  { topic: "daily", type: "match", q: "Соедините действия", pairs: [["起床", "Вставать"], ["吃饭", "Есть"], ["睡觉", "Спать"], ["工作", "Работать"]] },
+  { topic: "daily", type: "match", q: "Соедините предметы", pairs: [["猫", "Кот"], ["狗", "Собака"], ["花", "Цветок"], ["杯子", "Кружка"]] },
+  { topic: "daily", type: "match", q: "Соедините приёмы пищи", pairs: [["吃早饭", "Завтракать"], ["吃午饭", "Обедать"], ["吃晚饭", "Ужинать"], ["做饭", "Готовить"]] },
 
   /* ═════════════════ ЦВЕТА ═════════════════ */
   { topic: "colors", type: "choice", q: "Что означает 色?", answer: "Цвет", options: ["Свет", "Тень", "Краска"] },
@@ -194,11 +234,15 @@ export const TASKS = [
   { topic: "colors", type: "choice", q: "Что означает 粉红色?", answer: "Розовый", options: ["Красный", "Белый", "Серый"] },
   { topic: "colors", type: "choice", q: "Что означает 灰色?", answer: "Серый", options: ["Белый", "Чёрный", "Красный"] },
   { topic: "colors", type: "choice", q: "Что означает 米色?", answer: "Бежевый", options: ["Белый", "Серый", "Розовый"] },
+  
   { topic: "colors", type: "fill", q: "Напишите иероглифами: «цвет»", answers: ["色"], placeholder: "иероглиф" },
   { topic: "colors", type: "fill", q: "Напишите иероглифами: «красный»", answers: ["红色"], placeholder: "иероглифы" },
   { topic: "colors", type: "fill", q: "Напишите иероглифами: «белый»", answers: ["白色"], placeholder: "иероглифы" },
   { topic: "colors", type: "fill", q: "Напишите иероглифами: «чёрный»", answers: ["黑色"], placeholder: "иероглифы" },
   { topic: "colors", type: "fill", q: "Напишите пиньинь для 红色", answers: ["hongse"], placeholder: "пиньинь без тонов" },
+  
+  { topic: "colors", type: "order", q: "Соберите: «Это красный цвет»", words: ["红色", "这", "是"], answer: ["这", "是", "红色"] },
+  
   { topic: "colors", type: "match", q: "Соедините цвета", pairs: [["白色", "Белый"], ["黑色", "Чёрный"], ["红色", "Красный"], ["粉红色", "Розовый"]] },
 
   /* ═════════════════ ПИНЬИНЬ И ТОНЫ ═════════════════ */
@@ -212,11 +256,13 @@ export const TASKS = [
   { topic: "pinyin", type: "choice", q: "Какой русский звук передаёт инициаль q?", answer: "тси / чи", options: ["си", "ди", "тши"] },
   { topic: "pinyin", type: "choice", q: "Какой русский звук передаёт инициаль j?", answer: "ди / ти / дзи", options: ["си", "тси", "ши"] },
   { topic: "pinyin", type: "choice", q: "Какой русский звук передаёт инициаль r?", answer: "ж", options: ["р", "ш", "дж"] },
+  
   { topic: "pinyin", type: "fill", q: "Напишите пиньинь для 你好", answers: ["nihao"], placeholder: "пиньинь без тонов" },
   { topic: "pinyin", type: "fill", q: "Напишите пиньинь для 朋友", answers: ["pengyou"], placeholder: "пиньинь без тонов" },
   { topic: "pinyin", type: "fill", q: "Напишите пиньинь для 时间", answers: ["shijian"], placeholder: "пиньинь без тонов" },
   { topic: "pinyin", type: "fill", q: "Напишите пиньинь для 现在", answers: ["xianzai"], placeholder: "пиньинь без тонов" },
   { topic: "pinyin", type: "fill", q: "Напишите пиньинь для 汉语", answers: ["hanyu"], placeholder: "пиньинь без тонов" },
+  
   { topic: "pinyin", type: "match", q: "Соедините инициали и звуки (1)", pairs: [["zh", "дж"], ["ch", "чъ / тш"], ["sh", "ш"], ["r", "ж"]] },
   { topic: "pinyin", type: "match", q: "Соедините инициали и звуки (2)", pairs: [["j", "ди / ти"], ["q", "тси / чи"], ["x", "си"], ["s", "с"]] }
 ];
@@ -247,14 +293,13 @@ function numToChinese(num) {
     }
     return res;
   }
-  return '千'; // Ограничимся сотнями для простоты игры
+  return '千';
 }
 
 function genNumbers() {
   const res = [];
   for (let i = 0; i < 30; i++) {
     let num = Math.floor(Math.random() * 150) + 1;
-    // Добавим специфичные из конспекта (101, 110, 111, 105, 150, 115)
     const specials = [101, 110, 111, 105, 150, 115];
     if (i < 10) num = specials[i % specials.length];
     
@@ -340,5 +385,4 @@ function genDates() {
   return res;
 }
 
-// Добавляем сгенерированные задания в общий банк
 TASKS.push(...genNumbers(), ...genTime(), ...genDates());
