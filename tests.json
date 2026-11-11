@@ -7,10 +7,7 @@
         "qtype": "choice",
         "options": ["你叫什么名字？", "你多大了？", "你姓什么？", "很高兴认识你"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Вопросительное слово 什么 (shén me)."
       },
       {
@@ -18,38 +15,44 @@
         "qtype": "choice",
         "options": ["До свидания", "Приятно познакомиться", "Как твоя фамилия?", "Спасибо"],
         "correct": 1,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "认识 - познакомиться."
       },
       {
         "prompt": "Вставьте пропуск (глагол «звать»):\n你{}什么名字？",
         "qtype": "fill",
-        "options": [],
-        "correct": 0,
-        "answer": "",
-        "pairs": [],
+        "options": [], "correct": 0, "answer": "", "pairs": [],
         "fill_text": "你{}什么名字？",
         "fill_answers": ["叫"],
         "hint": "Один иероглиф."
       },
       {
+        "prompt": "Соберите предложение: «Приятно познакомиться»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "很高兴认识你",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Очень (很) + радостный (高兴) + познакомиться (认识) + ты (你)."
+      },
+      {
+        "prompt": "Соберите вопрос: «Как тебя зовут?»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "你叫什么名字",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Ты + звать + что + имя."
+      },
+      {
         "prompt": "Соедините приветствия",
         "qtype": "match",
-        "options": [],
-        "correct": 0,
-        "answer": "",
+        "options": [], "correct": 0, "answer": "",
         "pairs": [
           ["你好", "Привет"],
           ["您好", "Здравствуйте"],
           ["早上好", "Доброе утро"],
           ["晚上好", "Добрый вечер"]
         ],
-        "fill_text": "",
-        "fill_answers": [],
-        "hint": ""
+        "fill_text": "", "fill_answers": [], "hint": ""
       }
     ]
   },
@@ -61,10 +64,7 @@
         "qtype": "choice",
         "options": ["Мы", "Вы", "Они (мужчины)", "Они (женщины)"],
         "correct": 2,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Ключ 亻 (человек) слева."
       },
       {
@@ -72,49 +72,52 @@
         "qtype": "choice",
         "options": ["Мы", "Вы", "Они (мужчины)", "Они (женщины)"],
         "correct": 3,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Ключ 女 (женщина) слева."
       },
       {
         "prompt": "Напишите иероглифами: «Старшая сестра»",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "姐姐",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Два одинаковых иероглифа."
       },
       {
         "prompt": "Соберите предложение: «Он мой младший брат»",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "他是我的弟弟",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Он (他) + есть (是) + мой (我的) + младший брат (弟弟)."
+      },
+      {
+        "prompt": "Соберите предложение: «Она моя старшая сестра»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "她是我的姐姐",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Она (她) + есть (是) + мой (我的) + старшая сестра (姐姐)."
+      },
+      {
+        "prompt": "Соберите предложение: «Мы в школе»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我们在学校",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Мы (我们) + находиться (在) + школа (学校)."
       },
       {
         "prompt": "Соедините членов семьи",
         "qtype": "match",
-        "options": [],
-        "correct": 0,
-        "answer": "",
+        "options": [], "correct": 0, "answer": "",
         "pairs": [
           ["哥哥", "Старший брат"],
           ["弟弟", "Младший брат"],
           ["姐姐", "Старшая сестра"],
           ["妹妹", "Младшая сестра"]
         ],
-        "fill_text": "",
-        "fill_answers": [],
-        "hint": ""
+        "fill_text": "", "fill_answers": [], "hint": ""
       }
     ]
   },
@@ -124,45 +127,33 @@
       {
         "prompt": "Напишите число иероглифами: {{n:int:1..999}}",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "{{n@cn}}",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Сотни: цифра + 百. Если есть десятки и единицы, но нет десятков: 百 + 零 + цифра."
       },
       {
         "prompt": "Переведите на арабские цифры: {{n:int:1..999@cn}}",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "{{n}}",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "百 - сотни, 十 - десятки."
       },
       {
         "prompt": "Напишите число иероглифами: 101",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "一百零一",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Сотня + обязательно «ноль» (零) + единица."
       },
       {
         "prompt": "Напишите число иероглифами: 110",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "一百一十 / 一百一",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Сотня + десять. В разговорной речи вторую «десятку» часто опускают."
       }
     ]
@@ -173,23 +164,17 @@
       {
         "prompt": "Как сказать «два часа» (время)?",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "两点",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Внимание! Исключение. Используем 两 вместо 二."
       },
       {
         "prompt": "Напишите время иероглифами (используйте 刻, если нужно): {{t:time:12}}",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "{{t:time:12@cn}}",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Не забудьте часть дня (早上, 下午 и т.д.), а также правило 两 для двух часов."
       },
       {
@@ -197,33 +182,32 @@
         "qtype": "choice",
         "options": ["六点半", "六点一刻", "六点三十分", "六点二刻"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Половина — это 半. В конспекте также указаны варианты 三十分 и 二刻."
+      },
+      {
+        "prompt": "Соберите вопрос: «Сколько сейчас времени?»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "现在几点",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Сейчас (现在) + сколько (几) + час (点)."
+      },
+      {
+        "prompt": "Соберите предложение: «Сейчас 3 часа 15 минут»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "现在三点一刻",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Сейчас (现在) + три (三) + час (点) + четверть (一刻)."
       },
       {
         "prompt": "Что означает 中午?",
         "qtype": "choice",
         "options": ["Утро (5:00 - 9:00)", "До обеда (9:00 - 12:00)", "Обед (12:00 - 14:00)", "Днем (14:00 - 18:00)"],
         "correct": 2,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Время обеда."
-      },
-      {
-        "prompt": "Вставьте пропущенные слова (приём пищи):\nВо сколько ты завтракаешь?\n你几点{}早饭？",
-        "qtype": "fill",
-        "options": [],
-        "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "你几点{}早饭？",
-        "fill_answers": ["吃"],
-        "hint": "Глагол «есть, кушать»."
       }
     ]
   },
@@ -233,12 +217,9 @@
       {
         "prompt": "Напишите дату иероглифами: {{d:date:1900..2025}}",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "{{d@cn}}",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Год по цифрам, месяц и день — обычными числами (月, 日)."
       },
       {
@@ -246,27 +227,44 @@
         "qtype": "choice",
         "options": ["现在几点？", "今天几月几号？", "你叫什么名字？", "你喜欢星期几？"],
         "correct": 1,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "几月 (какой месяц) и 几号 (какое число)."
+      },
+      {
+        "prompt": "Соберите вопрос: «Какой день недели тебе нравится?»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "你喜欢星期几",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Ты (你) + нравится (喜欢) + неделя (星期) + сколько (几)."
+      },
+      {
+        "prompt": "Соберите предложение: «Мне нравится суббота»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我喜欢星期六",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + нравится (喜欢) + суббота (星期六)."
+      },
+      {
+        "prompt": "Соберите предложение: «Мой день рождения 15 июля»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我的生日是七月十五号",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Мой (我的) + день рождения (生日) + есть (是) + июль (七月) + 15 (十五) + число (号)."
       },
       {
         "prompt": "Соедините дни недели",
         "qtype": "match",
-        "options": [],
-        "correct": 0,
-        "answer": "",
+        "options": [], "correct": 0, "answer": "",
         "pairs": [
           ["星期一", "Понедельник"],
           ["星期六", "Суббота"],
           ["星期天", "Воскресенье"],
           ["星期日", "Воскресенье"]
         ],
-        "fill_text": "",
-        "fill_answers": [],
-        "hint": ""
+        "fill_text": "", "fill_answers": [], "hint": ""
       }
     ]
   },
@@ -278,10 +276,7 @@
         "qtype": "choice",
         "options": ["Обычная жизнь", "Выходной", "Учить китайский", "Сколько времени"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Обычный - rì cháng."
       },
       {
@@ -289,10 +284,7 @@
         "qtype": "choice",
         "options": ["的 (de)", "们 (men)", "是 (shì)", "在 (zài)"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Обычная жизнь → Обычный: 日常 生活 → 日常的."
       },
       {
@@ -300,19 +292,13 @@
         "qtype": "choice",
         "options": ["Во сколько ты встаешь?", "Сколько сейчас времени?", "Какой день недели?", "Когда ты завтракаешь?"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "起床 - вставать."
       },
       {
         "prompt": "Заполните пропуски:\nЯ утром в 8 часов ем завтрак.\n我早上八点吃{}。",
         "qtype": "fill",
-        "options": [],
-        "correct": 0,
-        "answer": "",
-        "pairs": [],
+        "options": [], "correct": 0, "answer": "", "pairs": [],
         "fill_text": "我早上八点吃{}。",
         "fill_answers": ["早饭"],
         "hint": "Завтрак - 早饭."
@@ -320,10 +306,7 @@
       {
         "prompt": "Заполните пропуски:\nЯ сейчас в школе.\n我{}学校。",
         "qtype": "fill",
-        "options": [],
-        "correct": 0,
-        "answer": "",
-        "pairs": [],
+        "options": [], "correct": 0, "answer": "", "pairs": [],
         "fill_text": "我{}学校。",
         "fill_answers": ["在"],
         "hint": "Глагол-предлог «находиться в»."
@@ -333,18 +316,77 @@
         "qtype": "choice",
         "options": ["你在做什么？", "你叫什么名字？", "你几点起床？", "现在几点？"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "做 - делать."
+      },
+      {
+        "prompt": "Соберите вопрос: «Во сколько ты встаешь?»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "你几点起床",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Ты (你) + сколько (几) + час (点) + вставать (起床)."
+      },
+      {
+        "prompt": "Соберите предложение: «Я встаю в 7 часов»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我七点起床",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + семь (七) + час (点) + вставать (起床)."
+      },
+      {
+        "prompt": "Соберите вопрос: «Во сколько ты завтракаешь?»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "你几点吃早饭",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Ты (你) + сколько (几) + час (点) + кушать (吃) + завтрак (早饭)."
+      },
+      {
+        "prompt": "Соберите предложение: «Я иду на работу»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我去上班",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + идти (去) + на работу (上班)."
+      },
+      {
+        "prompt": "Соберите предложение: «Я готовлю еду»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我在做饭",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + прямо сейчас (在) + готовить (做饭)."
+      },
+      {
+        "prompt": "Соберите предложение: «Я сейчас учу китайский»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我在学习中文",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + сейчас (在) + учить (学习) + китайский (中文)."
+      },
+      {
+        "prompt": "Соберите предложение: «Я смотрю телевизор»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我在看电视",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + сейчас (在) + смотреть ТВ (看电视)."
+      },
+      {
+        "prompt": "Соберите предложение: «Я делаю домашнее задание»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "我在做作业",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Я (我) + сейчас (在) + делать (做) + задание (作业)."
       },
       {
         "prompt": "Соедините предметы",
         "qtype": "match",
-        "options": [],
-        "correct": 0,
-        "answer": "",
+        "options": [], "correct": 0, "answer": "",
         "pairs": [
           ["猫", "Кот"],
           ["狗", "Собака"],
@@ -352,9 +394,7 @@
           ["杯子", "Кружка"],
           ["本子", "Тетрадь"]
         ],
-        "fill_text": "",
-        "fill_answers": [],
-        "hint": ""
+        "fill_text": "", "fill_answers": [], "hint": ""
       }
     ]
   },
@@ -364,9 +404,7 @@
       {
         "prompt": "Соедините цвета",
         "qtype": "match",
-        "options": [],
-        "correct": 0,
-        "answer": "",
+        "options": [], "correct": 0, "answer": "",
         "pairs": [
           ["白色", "Белый"],
           ["灰色", "Серый"],
@@ -375,20 +413,23 @@
           ["红色", "Красный"],
           ["粉红色", "Розовый"]
         ],
-        "fill_text": "",
-        "fill_answers": [],
-        "hint": ""
+        "fill_text": "", "fill_answers": [], "hint": ""
       },
       {
         "prompt": "Как будет «Красный» (цвет)?",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "红色",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Иероглиф «цвет» (色) + иероглиф «красный»."
+      },
+      {
+        "prompt": "Соберите предложение: «Это красный цвет»",
+        "qtype": "input",
+        "options": [], "correct": 0,
+        "answer": "这是红色",
+        "pairs": [], "fill_text": "", "fill_answers": [],
+        "hint": "Это (这) + есть (是) + красный (红色)."
       }
     ]
   },
@@ -400,10 +441,7 @@
         "qtype": "choice",
         "options": ["1-й (ровный)", "2-й (восходящий)", "3-й (нисходяще-восходящий)", "4-й (нисходящий)"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Прямая черта."
       },
       {
@@ -411,21 +449,15 @@
         "qtype": "choice",
         "options": ["дж", "ж", "чъ / тш", "ш"],
         "correct": 0,
-        "answer": "",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "answer": "", "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Например, в слове 中文 (zhōng wén)."
       },
       {
         "prompt": "Введите пиньинь (без тонов) для 朋友",
         "qtype": "input",
-        "options": [],
-        "correct": 0,
+        "options": [], "correct": 0,
         "answer": "pengyou",
-        "pairs": [],
-        "fill_text": "",
-        "fill_answers": [],
+        "pairs": [], "fill_text": "", "fill_answers": [],
         "hint": "Два слога: p... y..."
       }
     ]
