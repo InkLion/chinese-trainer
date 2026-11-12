@@ -86,8 +86,12 @@ async function renderTestList(container) {
       let lastResultHtml = '';
       if (stats.length > 0) {
         const last = stats[0];
-        lastResultHtml = `<div style="font-size: 13px; color: ${last.correct ? 'var(--success)' : 'var(--danger)'}; margin-top: 8px; background: var(--bg-card); padding: 4px 8px; border-radius: 6px; display: inline-block;">
-          Последний раз: ${last.correct ? 'Без ошибок' : 'С ошибками'}
+        
+        // ПРОВЕРЯЕМ, СОВПАДАЕТ ЛИ КОЛИЧЕСТВО ПРАВИЛЬНЫХ С ОБЩИМ
+        const isPerfect = last.correct === last.total; 
+        
+        lastResultHtml = `<div style="font-size: 13px; color: ${isPerfect ? 'var(--success)' : 'var(--danger)'}; margin-top: 8px; background: var(--bg-card); padding: 4px 8px; border-radius: 6px; display: inline-block;">
+          Последний раз: ${isPerfect ? 'Без ошибок' : 'С ошибками'}
         </div>`;
       }
 
