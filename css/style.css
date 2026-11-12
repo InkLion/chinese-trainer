@@ -1,330 +1,562 @@
-<style>
-  .app-header {
-    position: sticky;
-    top: 0;
-    z-index: 9999 !important;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 12px 18px;
-    background: rgba(0, 0, 0, .45);
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(8px);
-  }
-  .app-header .logo {
-    color: var(--gold);
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: 1px;
-  }
-  .app-header nav {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  .app-header nav a {
-    color: #d9cdf0;
-    text-decoration: none;
-    padding: 7px 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    transition: .15s;
-  }
-  .app-header nav a:hover { background: rgba(255,255,255,.1); color: #fff; }
-  .app-header nav a.active { background: rgba(244,196,48,.18); color: var(--gold); }
+/* =========================================================
+   БАЗОВЫЕ ПЕРЕМЕННЫЕ (ТЕМЫ)
+   ========================================================= */
+:root {
+  /* Темная тема (по умолчанию) */
+  --bg-body: radial-gradient(circle at 15% 0%, #2c1533 0%, #140a1c 55%, #0a0610 100%);
+  --bg-panel: rgba(255, 255, 255, 0.06);
+  --bg-card: rgba(255, 255, 255, 0.03);
+  --bg-hover: rgba(255, 255, 255, 0.1);
+  
+  --text-main: #f3ecff;
+  --text-muted: #b9a9d4;
+  
+  --gold: #f4c430;
+  --gold-glow: rgba(244, 196, 48, 0.4);
+  --border-color: rgba(255, 255, 255, 0.14);
+  
+  --danger: #ff8a8a;
+  --success: #4cc9a0;
+  --primary-btn: linear-gradient(180deg, #e63946, #b81f2c);
+  --primary-btn-border: #ff6b6b;
 
-  #app { padding: 18px; }
-    * { box-sizing: border-box; }
-    :root {
-      --gold: #f4c430;
-      --panel: rgba(255,255,255,.06);
-      --border: rgba(255,255,255,.14);
-    }
-  body {
-    margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    background: radial-gradient(circle at 15% 0%, #2c1533 0%, #140a1c 55%, #0a0610 100%);
-    color: #f3ecff;
-    min-height: 100vh;
-  }
-  h1 { margin: 0; font-size: 40px; letter-spacing: 2px; color: var(--gold); }
-  .hidden { display: none !important; }
-  .subtitle { color: #b9a9d4; margin: 6px 0 22px; }
-  .screen { max-width: 1240px; margin: 0 auto; }
+  /* Карточки */
+  --card-front-bg: linear-gradient(160deg, #3a2350, #241533);
+  --card-back-bg: linear-gradient(160deg, #1a2a3a, #101a25);
+  
+  /* Тени */
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.6);
 
-  #setup h1 { text-align: center; margin-top: 20px; }
-  #setup .subtitle { text-align: center; }
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 20px;
-    margin-bottom: 18px;
-    backdrop-filter: blur(6px);
-  }
-  .field { display: flex; align-items: center; gap: 10px; font-size: 16px; margin-bottom: 14px; flex-wrap: wrap; }
-  select, input[type="text"] {
-    background: rgba(0,0,0,.35);
-    border: 1px solid var(--border);
-    color: #fff;
-    border-radius: 10px;
-    padding: 8px 12px;
-    font-size: 16px;
-    font-family: inherit;
-  }
-  input[type="checkbox"] { width: 18px; height: 18px; accent-color: #4cc9a0; cursor: pointer; }
-  .names { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 18px; }
-  .names input { width: 100%; }
-  .name-row { display: flex; align-items: center; gap: 8px; }
-  .dot { width: 16px; height: 16px; border-radius: 50%; flex: 0 0 auto; }
-  .settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 6px 18px;
-    margin-bottom: 16px;
-  }
-  .settings-grid .field { margin-bottom: 0; }
-  .task-types {
-    display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center;
-    margin-bottom: 18px; font-size: 15px;
-  }
-  .task-types label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-  .task-types > span { color: #b9a9d4; margin-right: 4px; }
-  .task-types button { font-size: 13px; padding: 5px 11px; background: rgba(255,255,255,.1); }
-  button {
-    font-family: inherit;
-    font-size: 16px;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 11px 20px;
-    background: rgba(255,255,255,.1);
-    color: #fff;
-    transition: .15s;
-  }
-  button:hover:not(:disabled) { background: rgba(255,255,255,.2); transform: translateY(-1px); }
-  button:disabled { opacity: .45; cursor: not-allowed; }
-  button.primary {
-    background: linear-gradient(180deg, #e63946, #b81f2c);
-    border: 1px solid #ff6b6b;
-    font-weight: 700;
-    width: 100%;
-    font-size: 18px;
-    padding: 14px;
-    box-shadow: 0 8px 22px rgba(214,40,40,.35);
-  }
-  .rules ul { margin: 10px 0 0; padding-left: 20px; line-height: 1.7; color: #d9cdf0; }
-  .rules h3 { margin: 0; color: var(--gold); }
-  .rules b { color: var(--gold); }
-  .err { color: #ff8a8a; font-weight: 600; margin-top: 10px; }
+  --primary-btn: linear-gradient(180deg, #f4c430, #d4a017);
+  --primary-btn-border: #ffd75e;
+  --primary-btn-text: #2c1533;
+  --primary-btn-shadow: rgba(244, 196, 48, 0.3);
 
-  #game .topbar {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 14px; gap: 12px; flex-wrap: wrap;
-  }
-  #turnInfo { font-size: 18px; }
-  .layout { display: grid; grid-template-columns: 1fr 340px; gap: 18px; }
-  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+  --danger: #e63946;
+  --success: #2a9d8f;
+}
 
-  #board {
-    display: grid;
-    gap: 8px;
-    background: rgba(0,0,0,.25);
-    padding: 12px;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-  }
-  .cell {
-    position: relative;
-    aspect-ratio: 1 / 1;
-    border-radius: 12px;
-    background: linear-gradient(160deg, #3a2350, #241533);
-    border: 1px solid rgba(255,255,255,.1);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px;
-    transition: .2s;
-  }
-  .cell .num { position: absolute; top: 3px; left: 6px; font-size: 10px; color: rgba(255,255,255,.4); }
-  .cell.finish { background: linear-gradient(160deg, #b8860b, #7a5c00); border-color: var(--gold); font-size: 26px; }
-  .cell.special-cell { background: linear-gradient(160deg, #4a2a5e, #2e1840); border-color: rgba(244,196,48,.35); }
-  .cell .special { font-size: 26px; line-height: 1; }
-  .cell .tokens {
-    position: absolute; inset: auto 3px 3px 3px;
-    display: flex; flex-wrap: wrap; gap: 3px; justify-content: center;
-  }
-  .token {
-    width: 20px; height: 20px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 11px; font-weight: 800; color: #fff;
-    border: 2px solid rgba(0,0,0,.35);
-    box-shadow: 0 2px 6px rgba(0,0,0,.5);
-    transition: .18s;
-  }
-  .token.active { box-shadow: 0 0 0 3px var(--gold), 0 0 14px var(--gold); }
-  .token.ghost { opacity: .4; transform: scale(.82); }
+[data-theme="light"] {
+  --bg-body: #f0f0f5;
+  --bg-panel: #ffffff;
+  --bg-card: #f8f8fb;
+  --bg-hover: rgba(0, 0, 0, 0.05);
+  
+  --text-main: #2c1533;
+  --text-muted: #6b5b7b;
+  
+  /* МЕНЯЕМ ЗОЛОТОЙ НА ФИОЛЕТОВЫЙ */
+  --gold: #7e57c2; 
+  --gold-glow: rgba(126, 87, 194, 0.2);
+  --border-color: rgba(0, 0, 0, 0.12);
+  
+  --danger: #d32f2f;
+  --success: #2e7d32;
 
-  #startZone {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 10px; padding: 8px 14px;
-    border: 1px dashed var(--border); border-radius: 12px;
-    background: rgba(255,255,255,.04);
-    min-height: 46px;
-  }
-  #startZone .label { font-size: 13px; color: #b9a9d4; letter-spacing: 1px; }
-  #startZone .tokens { display: flex; gap: 5px; flex-wrap: wrap; }
+  --card-front-bg: linear-gradient(160deg, #f9f9f9, #e0e0e0);
+  --card-back-bg: linear-gradient(160deg, #e3f2fd, #bbdefb);
+  
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.15);
 
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    padding: 14px;
-    margin-bottom: 14px;
-  }
-  .panel h3 { margin: 0 0 10px; font-size: 13px; letter-spacing: 1.5px; color: #b9a9d4; text-transform: uppercase; }
-  .player-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 10px; margin-bottom: 6px;
-    background: rgba(255,255,255,.04);
-    transition: .2s;
-  }
-  .player-row.current { background: rgba(244,196,48,.16); box-shadow: inset 0 0 0 1px var(--gold); }
-  .player-row.done { opacity: .6; }
-  .player-row .nm { flex: 1; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .player-row .sc { font-weight: 800; color: var(--gold); font-size: 17px; }
-  .player-row .ps { font-size: 12px; color: #b9a9d4; min-width: 64px; text-align: right; }
-  .streak { color: #ff8c42; font-size: 12px; font-weight: 700; margin-left: 4px; }
+  /* Кнопки делаем в тон акценту */
+  --primary-btn: linear-gradient(180deg, #9575cd, #673ab7);
+  --primary-btn-border: #b39ddb;
+  --primary-btn-text: #ffffff;
+  --primary-btn-shadow: rgba(103, 58, 183, 0.3);
+}
 
-  #diceBox { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
-  #dice {
-    width: 62px; height: 62px; border-radius: 14px;
-    background: linear-gradient(160deg, #fff, #d8d0e8);
-    color: #2a1030; font-size: 32px; font-weight: 900;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,.5);
-    flex: 0 0 auto;
-  }
-  #rollBtn { flex: 1; background: linear-gradient(180deg, #4cc9a0, #2a9d8f); border-color: #6ee7c2; font-weight: 700; }
+/* =========================================================
+   БАЗОВЫЕ СТИЛИ И ШРИФТЫ
+   ========================================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  #log { max-height: 220px; overflow-y: auto; font-size: 13px; line-height: 1.45; }
-  #log div { padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,.06); color: #d9cdf0; }
-  #log .good { color: #7ef0b0; }
-  #log .bad  { color: #ff8a8a; }
-  #log .sys  { color: #b9a9d4; font-style: italic; }
-  #log .finish { color: var(--gold); font-weight: 700; }
+html {
+  font-size: 16px; /* База для rem (меняется через настройки JS) */
+  transition: font-size 0.2s ease;
+}
 
-  .overlay {
-    position: fixed; inset: 0; z-index: 50;
-    background: rgba(8,4,14,.82);
-    display: flex; align-items: center; justify-content: center;
-    padding: 18px;
-  }
-  .modal-card {
-    width: 100%; max-width: 620px;
-    background: linear-gradient(170deg, #2b1a3d, #1a0f27);
-    border: 1px solid rgba(244,196,48,.35);
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 24px 70px rgba(0,0,0,.7);
-    max-height: 92vh;
-    overflow-y: auto;
-  }
-  @keyframes pop { from { transform: scale(.94); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .timer-wrap {
-    height: 6px; border-radius: 3px; overflow: hidden;
-    background: rgba(255,255,255,.1); margin-bottom: 16px;
-  }
-  .timer-fill {
-    height: 100%; width: 100%;
-    background: linear-gradient(90deg, #4cc9a0, #f4c430 60%, #e63946);
-    transition: width .12s linear;
-  }
-  .q-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; font-size: 13px; gap: 10px; }
-  .q-player { font-weight: 800; font-size: 17px; }
-  .q-label { color: #b9a9d4; letter-spacing: 1px; text-transform: uppercase; text-align: right; }
-  .timer-text { color: var(--gold); margin-left: 6px; font-weight: 700; }
-  .q-text { font-size: 21px; line-height: 1.45; margin-bottom: 16px; font-weight: 600; }
-  .q-text b { color: var(--gold); }
-  .q-options { display: grid; gap: 10px; }
-  .opt { text-align: left; padding: 13px 18px; font-size: 17px; background: rgba(255,255,255,.07); }
-  .opt.correct { background: rgba(76,201,160,.35); border-color: #4cc9a0; }
-  .opt.wrong   { background: rgba(230,57,70,.35); border-color: #e63946; }
-  .feedback { margin-top: 14px; min-height: 24px; font-size: 16px; font-weight: 600; }
-  .feedback.good { color: #7ef0b0; }
-  .feedback.bad  { color: #ff8a8a; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg-body);
+  color: var(--text-main);
+  min-height: 100vh;
+  line-height: 1.5;
+  transition: background 0.3s ease, color 0.3s ease;
+}
 
-  .img-box {
-    display: flex; align-items: center; justify-content: center;
-    font-size: 92px; line-height: 1;
-    height: 140px;
-    margin-bottom: 14px;
-    border-radius: 16px;
-    background: rgba(255,255,255,.05);
-    border: 1px solid var(--border);
-  }
-  .img-box img { max-height: 130px; max-width: 100%; border-radius: 12px; }
+h1 { font-size: 2.5rem; color: var(--gold); letter-spacing: 1px; }
+h2 { font-size: 1.75rem; }
+h3 { font-size: 1.25rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
 
-  .fill-input {
-    width: 100%; font-size: 20px; padding: 13px 16px; border-radius: 12px;
-    background: rgba(0,0,0,.35); border: 1px solid var(--border);
-    color: #fff; font-family: inherit; margin-bottom: 10px;
-  }
-  .fill-input:disabled { opacity: .6; }
-  .blank { display: inline-block; min-width: 64px; border-bottom: 2px solid var(--gold); margin: 0 4px; }
-  .hint-box {
-    display: none; margin-top: 6px; margin-bottom: 10px; padding: 10px 14px;
-    background: rgba(244,196,48,.12); border: 1px solid rgba(244,196,48,.3);
-    border-radius: 10px; font-size: 14px; color: #f4c430;
-  }
+a { color: var(--gold); text-decoration: none; }
 
-  .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 6px; }
-  .match-col { display: flex; flex-direction: column; gap: 8px; }
-  .match-item {
-    padding: 11px 12px; text-align: center; font-size: 16px;
-    background: rgba(255,255,255,.07);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    transition: .15s;
-  }
-  .match-item.selected { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(244,196,48,.4); background: rgba(244,196,48,.18); }
-  .match-item.matched { background: rgba(76,201,160,.28); border-color: #4cc9a0; opacity: .8; cursor: default; }
-  .match-item.wrong { background: rgba(230,57,70,.4); border-color: #e63946; }
+/* =========================================================
+   ШАПКА САЙТА
+   ========================================================= */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0.75rem max(1.5rem, 4vw);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+}
 
-  .order-answer {
-    min-height: 58px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
-    padding: 12px; border: 1px dashed var(--border); border-radius: 12px;
-    margin-bottom: 12px; background: rgba(0,0,0,.2);
-  }
-  .order-hint { color: #8f7fae; font-size: 13px; font-style: italic; }
-  .order-pool { display: flex; flex-wrap: wrap; gap: 8px; }
-  .word-chip { padding: 9px 15px; font-size: 17px; background: rgba(255,255,255,.09); }
+.app-header .logo {
+  color: var(--gold);
+  font-weight: 900;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 15px var(--gold-glow);
+  transition: 0.2s;
+}
 
-  .lifelines { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-  .lifeline-btn {
-    font-size: 13px; padding: 7px 12px;
-    background: rgba(244,196,48,.15);
-    border: 1px solid rgba(244,196,48,.4);
-  }
+.app-header .logo:hover { text-shadow: 0 0 25px var(--gold); }
 
-  .choice-btns { display: flex; gap: 10px; margin-top: 16px; }
-  .choice-btns button { flex: 1; font-size: 17px; padding: 14px; }
-  #lockInBtn {
-    background: linear-gradient(180deg, #f4c430, #d4a017);
-    color: #2a1030; font-weight: 800; border-color: #ffd75e;
-  }
+.app-header nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
 
-  #endBody { margin: 18px 0 22px; }
-  .end-row {
-    display: flex; align-items: flex-start; gap: 10px;
-    padding: 12px 14px; border-radius: 12px; margin-bottom: 8px;
-    background: rgba(255,255,255,.05);
-  }
-  .end-row.win { background: rgba(244,196,48,.2); box-shadow: inset 0 0 0 1px var(--gold); }
-  .end-row .place { font-size: 20px; width: 32px; flex: 0 0 auto; }
-  .end-info { flex: 1; min-width: 0; }
-  .end-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
-  .end-top .nm { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .end-top .sc { color: var(--gold); font-weight: 800; font-size: 17px; flex: 0 0 auto; }
-  .stat-line { font-size: 12px; color: #b9a9d4; margin-top: 3px; line-height: 1.4; }
-</style>
+.app-header nav a {
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.app-header nav a:hover { background: var(--bg-hover); color: var(--text-main); }
+.app-header nav a.active {
+  background: var(--gold-glow);
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* =========================================================
+   ОБЩИЕ КОМПОНЕНТЫ (КАРТОЧКИ, КНОПКИ, ИНПУТЫ)
+   ========================================================= */
+#app { padding: 1.5rem; }
+
+.card, .panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.3s ease;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-hover);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) { background: var(--border-color); transform: translateY(-1px); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+button.primary {
+  background: var(--primary-btn);
+  border: 1px solid var(--primary-btn-border);
+  color: var(--primary-btn-text);
+  font-weight: 700;
+  width: 100%;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 22px var(--primary-btn-shadow);
+  text-shadow: none;
+}
+
+.fill-input, select, input[type="text"] {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.fill-input:focus, select:focus, input[type="text"]:focus {
+  border-color: var(--gold);
+  outline: none;
+  box-shadow: 0 0 0 2px var(--gold-glow);
+}
+
+/* Главная страница */
+.menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 1.5rem;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.menu-card:hover {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.menu-card > div:first-child { font-size: 3.5rem; margin-bottom: 1rem; filter: drop-shadow(0 0 10px var(--gold-glow)); }
+.menu-card > div:nth-child(2) { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; }
+.menu-card > div:nth-child(3) { font-size: 1rem; color: var(--text-muted); }
+
+/* =========================================================
+   МОДУЛЬ ТЕСТОВ
+   ========================================================= */
+.test-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Растягиваем карточку на всю высоту ячейки */
+  padding: 1.5rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.test-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.test-card .test-title { font-weight: 800; font-size: 1.25rem; color: var(--gold); margin-bottom: 0.5rem; }
+.test-card .test-stats { font-size: 0.9rem; color: var(--text-muted); }
+
+.test-card .test-click-area {
+  flex: 1; 
+  cursor: pointer;
+}
+
+.review-btn {
+  margin-top: auto;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  background: rgba(230, 57, 70, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: 0.5rem;
+  transition: 0.2s;
+}
+
+.review-btn:hover { background: rgba(230, 57, 70, 0.2); transform: none; }
+
+.q-text { font-size: 1.4rem; line-height: 1.5; margin-bottom: 1.5rem; font-weight: 600; }
+.q-text b { color: var(--gold); }
+
+.opt { text-align: left; padding: 1rem 1.25rem; font-size: 1.1rem; background: var(--bg-hover); }
+.opt.correct { background: rgba(76, 201, 160, 0.2); border-color: var(--success); color: var(--success); }
+.opt.wrong { background: rgba(230, 57, 70, 0.2); border-color: var(--danger); color: var(--danger); }
+
+/* Сборка предложений */
+.order-answer {
+  min-height: 4rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+  padding: 1rem; border: 2px dashed var(--border-color); border-radius: 1rem;
+  margin-bottom: 1rem; background: var(--bg-card);
+}
+.word-chip { padding: 0.5rem 1rem; font-size: 1.1rem; background: var(--bg-hover); border: 1px solid var(--border-color); }
+.word-chip:hover { background: var(--gold); color: #000; }
+
+/* Пары */
+.match-grid { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 1rem; 
+  align-items: start; /* Выравниваем колонки по верхнему краю */
+}
+
+.match-col { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.5rem; 
+  width: 100%;
+}
+
+.match-item { 
+  padding: 0.75rem 1rem; 
+  text-align: center; 
+  font-size: 1rem; 
+  background: var(--bg-hover); 
+  border-radius: 0.5rem; 
+  border: 1px solid var(--border-color); /* Добавили рамку для четкости */
+  width: 100%;
+  min-height: 3.5rem; /* Жестко задаем минимальную высоту */
+  display: flex; 
+  align-items: center; /* Центрируем текст по вертикали */
+  justify-content: center; /* Центрируем текст по горизонтали */
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.match-item:hover {
+  background: var(--border-color);
+}
+
+.match-item.selected { 
+  border-color: var(--gold); 
+  background: var(--gold-glow); 
+}
+
+.match-item.matched { 
+  background: rgba(76, 201, 160, 0.2); 
+  border-color: var(--success); 
+  color: var(--success); 
+  pointer-events: none; 
+}
+
+.match-item.wrong { 
+  background: rgba(230, 57, 70, 0.2); 
+  border-color: var(--danger); 
+  color: var(--danger); 
+}
+
+/* =========================================================
+   СВОЯ ИГРА
+   ========================================================= */
+.jeopardy-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--gold);
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 1.5rem 0.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.jeopardy-cell:hover:not(:disabled) {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  color: var(--gold);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* =========================================================
+   КАРТОЧКИ (FLASHCARDS)
+   ========================================================= */
+.deck-pile {
+  width: 7.5rem;
+  height: 11rem;
+  background: var(--bg-panel);
+  border: 2px dashed var(--border-color);
+  border-radius: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+}
+
+.flashcard-inner {
+  box-shadow: var(--shadow-md);
+  border-radius: 1.25rem;
+  cursor: pointer;
+}
+
+/* Стили для самих карточек (перед и зад) */
+.flashcard-front {
+  background: var(--card-front-bg);
+  border: 2px solid var(--gold);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.flashcard-back {
+  background: var(--card-back-bg);
+  border: 2px solid #3a86ff;
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+/* Цвет иероглифа (в темной - белый, в светлой - черный) */
+.hanzi-display {
+  font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+  font-size: 4rem;
+  font-weight: 500;
+  letter-spacing: 0.1rem;
+  color: var(--text-main); /* <-- Это решит проблему с невидимым текстом */
+  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* =========================================================
+   МОДАЛЬНЫЕ ОКНА (Игра)
+   ========================================================= */
+.overlay {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(8, 4, 14, 0.85);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+
+.modal-card {
+  width: 100%; 
+  max-width: 38rem;
+  
+  /* Задаем плотный, непрозрачный фон для темной темы */
+  background: #1e122b; 
+  
+  border: 1px solid var(--gold-glow);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9); /* Усилили тень, чтобы окно "висело" над игрой */
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Добавляем непрозрачный фон для светлой темы */
+[data-theme="light"] .modal-card {
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* =========================================================
+   АНИМАЦИИ
+   ========================================================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden { display: none !important; }
+
+/* --- Улучшение "Своей игры" для светлой темы --- */
+[data-theme="light"] .jeopardy-cell {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: var(--gold); /* Теперь цвет берется из переменной (фиолетовый) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .jeopardy-cell:hover {
+  background: var(--gold-glow); /* Фиолетовая подсветка при наведении */
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* Заголовки тем (категории) */
+[data-theme="light"] .jeopardy-header {
+  background: var(--gold-glow) !important;
+  border: 1px solid var(--gold) !important;
+  color: var(--gold) !important;
+  font-weight: 800;
+}
+
+/* Маленькая кнопка "Повторить" */
+.review-btn-small {
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: 8px;
+  transition: 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.review-btn-small:hover {
+  background: rgba(230, 57, 70, 0.15);
+  transform: translateY(-1px);
+}
+
+/* В светлой теме чекбоксы тоже сделаем фиолетовыми */
+[data-theme="light"] input[type="checkbox"] {
+  accent-color: var(--gold);
+}
+
+/* Виджет обратной связи */
+#feedbackWidget {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+#feedbackToggleBtn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--primary-btn);
+  color: var(--primary-btn-text);
+  font-size: 24px;
+  border: 1px solid var(--primary-btn-border);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+#feedbackToggleBtn:hover { transform: scale(1.1); }
+
+#feedbackModal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1001;
+}
+
+.feedback-card {
+  background: #1e122b; /* Плотный темный фон для темной темы */
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.8); /* Добавили глубокую тень */
+  position: relative;
+  z-index: 1002;
+}
+
+/* Отдельный стиль для светлой темы */
+[data-theme="light"] .feedback-card {
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+#feedbackModal.hidden { display: none; }
+
+/* Исправление выпадающих списков в темной теме */
+select option {
+  background-color: #2c1533; /* Темный фон */
+  color: #f3ecff; /* Светлый текст */
+}
+
+[data-theme="light"] select option {
+  background-color: #ffffff;
+  color: #2c1533;
+}

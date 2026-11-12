@@ -86,7 +86,9 @@ function formatTimeCn(hour, minute, mode = "24") {
   } else if (minute === 30) {
     s += "半";
   } else if (minute < 10) {
-    s += "零" + toCnNumber(minute) + "分";
+    // Генерируем оба варианта: с нулем и без, разделяя их слэшем
+    const mCn = toCnNumber(minute) + "分";
+    s += `零${mCn}/${mCn}`; 
   } else {
     s += toCnNumber(minute) + "分";
   }
@@ -120,7 +122,14 @@ function generateValue(type, params) {
   
   if (type === "choice") {
     const opts = (params || "").split("|").map(s => s.trim()).filter(Boolean);
-    return opts.length > 0 ? opts[Math.floor(Math.random() * opts.length)] : "";
+    if (opts.length === 0) return { ru: "", cn: "" };
+    
+    const selected = opts[Math.floor(Math.random() * opts.length)];
+    const parts = selected.split(":");
+    return { 
+      ru: parts[0], 
+      cn: parts[1] || parts[0] 
+    };
   }
   
   if (type === "date") {
@@ -155,12 +164,17 @@ function formatValue(value, type, fmt, params) {
   }
   
   if (type === "choice") {
-    return String(value);
+    if (fmt === "cn") return value.cn;
+    return value.ru;
   }
   
   if (type === "date") {
     if (fmt === "cn") {
-      return `${toCnYear(value.year)}年${toCnNumber(value.month)}月${toCnNumber(value.day)}日`;
+      const y = toCnYear(value.year);
+      const m = toCnNumber(value.month);
+      const d = toCnNumber(value.day);
+      // Возвращаем оба варианта: с "日" и с "号"
+      return `${y}年${m}月${d}日/${y}年${m}月${d}号`;
     }
     if (fmt) {
       // Простая реализация strftime для JS
@@ -253,37 +267,38 @@ function resolveText(text, ctx) {
 export function resolveQuestion(q) {
   const ctx = new VarContext();
   
-  // Сначала собираем все переменные из всех текстовых полей вопроса,
-  // чтобы они были согласованы (например, {{n}} в вопросе и в ответе - это одно и то же число)
-  const sources = [q.prompt, q.answer, q.hint, q.fill_text];
+  // 1. Собираем все переменные (безопасно для строк и массивов)
+  const sources = [q.prompt, q.hint, q.fill_text];
+  if (typeof q.answer === 'string') sources.push(q.answer);
+  if (Array.isArray(q.answer)) sources.push(...q.answer);
+  if (Array.isArray(q.words)) sources.push(...q.words);
   if (q.options) sources.push(...q.options);
   if (q.fill_answers) sources.push(...q.fill_answers);
-  if (q.pairs) {
-    q.pairs.forEach(pair => sources.push(pair[0], pair[1]));
-  }
+  if (q.pairs) q.pairs.forEach(pair => sources.push(pair[0], pair[1]));
 
-  // Проходим по всем строкам, чтобы зарегистрировать (define) переменные
   for (const src of sources) {
-    if (!src) continue;
+    if (!src || typeof src !== 'string') continue; // Пропускаем не-строки
     const matches = [...src.matchAll(TEMPLATE_RE)];
     for (const match of matches) {
       const { name, type, params } = parsePlaceholder(match[1], match[2], match[3], match[4]);
-      if (type) {
-        ctx.define(name, type, params);
-      }
+      if (type) ctx.define(name, type, params);
     }
   }
 
-  // Теперь заменяем все шаблоны на сгенерированные значения
+  // 2. Функция для разрешения текста (работает только со строками)
+  const resolve = (text) => typeof text === 'string' ? resolveText(text, ctx) : text;
+
+  // 3. Возвращаем объект, сохраняя массивы как массивы
   return {
     ...q,
-    prompt: resolveText(q.prompt, ctx),
-    options: q.options ? q.options.map(o => resolveText(o, ctx)) : [],
-    answer: resolveText(q.answer, ctx),
-    pairs: q.pairs ? q.pairs.map(p => [resolveText(p[0], ctx), resolveText(p[1], ctx)]) : [],
-    fill_text: resolveText(q.fill_text, ctx),
-    fill_answers: q.fill_answers ? q.fill_answers.map(a => resolveText(a, ctx)) : [],
-    hint: resolveText(q.hint, ctx)
+    prompt: resolve(q.prompt),
+    options: Array.isArray(q.options) ? q.options.map(resolve) : [],
+    answer: Array.isArray(q.answer) ? q.answer.map(resolve) : resolve(q.answer),
+    words: Array.isArray(q.words) ? q.words.map(resolve) : [],
+    pairs: Array.isArray(q.pairs) ? q.pairs.map(p => [resolve(p[0]), resolve(p[1])]) : [],
+    fill_text: resolve(q.fill_text),
+    fill_answers: Array.isArray(q.fill_answers) ? q.fill_answers.map(resolve) : [],
+    hint: resolve(q.hint)
   };
 }
 
@@ -296,12 +311,6 @@ export function normalizeAnswer(s) {
   if (/[\u4e00-\u9fff]/.test(s)) {
     return s.replace(/[^\u4e00-\u9fff]/g, "");
   }
-  // Иначе очищаем пиньинь
-  return s
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[1-5]/g, "")
-    .replace(/[^a-zа-яё]/g, "")
-    .replace(/ё/g, "е");
+  // Иначе приводим к нижнему регистру и убираем ТОЛЬКО пробелы (оставляем цифры и дефисы)
+  return s.toLowerCase().replace(/\s+/g, ""); 
 }

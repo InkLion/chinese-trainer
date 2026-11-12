@@ -1,57 +1,132 @@
 // js/modules/profile.js
-import { setCurrentUser, getAllUsers } from '../core/storage.js';
+import { setCurrentUser } from '../core/storage.js';
+import { supabase } from '../core/supabase.js';
 
 export function init(container) {
-  // Получаем список уже существующих профилей в этом браузере
-  const existingUsers = getAllUsers();
+  let view = 'login'; // 'login' | 'register'
 
-  let html = `
-    <div class="card" style="max-width: 500px; margin: 40px auto; text-align: center;">
-      <h1 style="color: var(--gold);">Вход в тренажёр</h1>
-      <p class="subtitle">Введите ваше имя, чтобы сохранять прогресс отдельно от других.</p>
-      
-      <input type="text" id="usernameInput" class="fill-input" placeholder="Ваше имя (например, Иван)" autocomplete="off" style="text-align: center; margin-bottom: 16px;">
-      
-      <button id="loginBtn" class="primary">Войти</button>
-  `;
+  function render() {
+    container.innerHTML = `
+      <div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 400px; padding: 30px 24px; box-shadow: 0 24px 60px rgba(0,0,0,0.6); border: 1px solid rgba(244,196,48,0.2);">
+          
+          <!-- Крупный логотип -->
+          <div style="text-align: center; margin-bottom: 30px;">
+            <div style="font-size: 72px; font-weight: 900; color: var(--gold); line-height: 1; text-shadow: 0 0 30px rgba(244,196,48,0.4); letter-spacing: 4px;">汉语</div>
+            <div style="font-size: 16px; color: #b9a9d4; margin-top: 8px; letter-spacing: 2px; text-transform: uppercase;">Тренажёр</div>
+          </div>
 
-  // Если есть сохраненные профили, показываем их как быстрые кнопки
-  if (existingUsers.length > 0) {
-    html += `
-      <div style="margin-top: 30px; border-top: 1px solid var(--border); padding-top: 20px;">
-        <div style="font-size: 14px; color: #b9a9d4; margin-bottom: 10px;">Или выберите профиль:</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">
-          ${existingUsers.map(u => `<button class="quick-user" data-name="${u}" style="padding: 6px 12px; font-size: 14px; background: rgba(255,255,255,.1);">${u}</button>`).join('')}
+          <!-- Переключатель Вход / Регистрация -->
+          <div style="display: flex; margin-bottom: 24px; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 4px; border: 1px solid var(--border);">
+            <button id="tabLogin" style="flex:1; padding:12px; border-radius:8px; background:${view === 'login' ? 'var(--gold)' : 'transparent'}; color:${view === 'login' ? '#000' : '#fff'}; border:none; cursor:pointer; font-weight:bold; transition: 0.2s;">Вход</button>
+            <button id="tabRegister" style="flex:1; padding:12px; border-radius:8px; background:${view === 'register' ? 'var(--gold)' : 'transparent'}; color:${view === 'register' ? '#000' : '#fff'}; border:none; cursor:pointer; font-weight:bold; transition: 0.2s;">Регистрация</button>
+          </div>
+
+          <div id="formArea" style="display:flex; flex-direction:column; gap:16px;">
+            
+            <!-- Строго одинаковые поля -->
+            <input type="text" id="username" class="fill-input login-input" placeholder="Ваш ник (латиницей)" autocomplete="off" spellcheck="false">
+            <input type="password" id="password" class="fill-input login-input" placeholder="Пароль (от 6 символов)" autocomplete="off">
+            
+            <button id="submitBtn" class="primary" style="margin-top: 8px;">
+              ${view === 'login' ? 'Войти' : 'Зарегистрироваться'}
+            </button>
+            
+            <div id="authMsg" style="color: #ff8a8a; font-size: 14px; min-height: 20px; text-align: center; line-height: 1.4;"></div>
+          </div>
         </div>
       </div>
     `;
+
+    document.getElementById('tabLogin').onclick = () => { view = 'login'; render(); };
+    document.getElementById('tabRegister').onclick = () => { view = 'register'; render(); };
+    document.getElementById('submitBtn').onclick = handleSubmit;
+    
+    setTimeout(() => document.getElementById('username').focus(), 50);
   }
 
-  html += `</div>`;
-  container.innerHTML = html;
+  async function handleSubmit() {
+    const rawUsername = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const msgEl = document.getElementById('authMsg');
+    const btn = document.getElementById('submitBtn');
 
-  const input = document.getElementById('usernameInput');
-  const btn = document.getElementById('loginBtn');
-
-  // Логика входа
-  const doLogin = (name) => {
-    if (!name || name.trim().length < 2) {
-      alert('Имя должно содержать хотя бы 2 символа.');
+    if (!rawUsername || !password) {
+      msgEl.textContent = 'Заполните все поля.';
       return;
     }
-    setCurrentUser(name);
-    window.location.hash = '#/'; // Перекидываем на главную
-    window.location.reload(); // Перезагружаем, чтобы обновить меню
-  };
 
-  btn.addEventListener('click', () => doLogin(input.value));
-  input.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(input.value); });
+    // Проверка на латиницу, цифры, дефис и подчеркивание
+    const loginRegex = /^[a-zA-Z0-9_-]+$/;
+    if (!loginRegex.test(rawUsername)) {
+      msgEl.textContent = 'Ник должен содержать только английские буквы, цифры, знаки _ и -.';
+      return;
+    }
 
-  // Обработка кнопок быстрого входа
-  container.querySelectorAll('.quick-user').forEach(b => {
-    b.addEventListener('click', () => doLogin(b.dataset.name));
-  });
+    // Превращаем ник в служебный email (приводим к нижнему регистру, чтобы избежать путаницы)
+    const technicalEmail = `${rawUsername.toLowerCase()}@trenerzh.local`;
 
-  setTimeout(() => input.focus(), 50);
+    btn.disabled = true;
+    btn.textContent = 'Подождите...';
+    msgEl.textContent = '';
+
+    try {
+      if (view === 'register') {
+        // 1. Регистрация в Auth
+        const { data, error } = await supabase.auth.signUp({ 
+          email: technicalEmail, 
+          password: password 
+        });
+        if (error) throw error;
+
+        // 2. Создание профиля (используем тот же ник)
+        const { error: profileErr } = await supabase
+          .from('profiles')
+          .insert({ id: data.user.id, username: rawUsername });
+        
+        if (profileErr) throw profileErr;
+
+        setCurrentUser(rawUsername);
+        window.location.hash = '#/';
+        window.location.reload();
+
+      } else {
+        // Вход
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+          email: technicalEmail, 
+          password: password 
+        });
+        if (error) throw error;
+
+        // Получаем ник из профиля (на случай, если регистр изменился)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('username')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profile) {
+          setCurrentUser(profile.username);
+          window.location.hash = '#/';
+          window.location.reload();
+        } else {
+          throw new Error('Профиль не найден в базе.');
+        }
+      }
+    } catch (err) {
+      // Переводим частые ошибки Supabase на понятный язык
+      if (err.message.includes('User already registered')) {
+        msgEl.textContent = 'Этот ник уже занят. Попробуйте другой.';
+      } else if (err.message.includes('Invalid login credentials')) {
+        msgEl.textContent = 'Неверный ник или пароль.';
+      } else {
+        msgEl.textContent = err.message;
+      }
+      btn.disabled = false;
+      btn.textContent = view === 'login' ? 'Войти' : 'Зарегистрироваться';
+    }
+  }
+
+  render();
   return () => {};
 }

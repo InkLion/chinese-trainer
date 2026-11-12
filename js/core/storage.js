@@ -1,4 +1,5 @@
 // js/core/storage.js
+import { supabase } from './supabase.js';
 
 const USER_KEY = 'hsk_current_user';
 
@@ -11,82 +12,98 @@ export function setCurrentUser(name) {
   localStorage.setItem(USER_KEY, name.trim());
 }
 
-export function logout() {
+export async function logout() {
   localStorage.removeItem(USER_KEY);
+  await supabase.auth.signOut(); // Выход из Supabase
 }
 
-// Получаем список всех профилей, которые когда-либо заходили с этого браузера
-export function getAllUsers() {
-  const users = [];
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith('hsk_data_')) {
-      users.push(key.replace('hsk_data_', ''));
-    }
-  }
-  return users.sort();
+export async function getAllUsers() {
+  const { data } = await supabase.from('profiles').select('username');
+  return (data || []).map(d => d.username);
 }
 
-// === РАБОТА С ДАННЫМИ (ПРИВЯЗАНА К ПОЛЬЗОВАТЕЛЮ) ===
-function getData() {
-  const user = getCurrentUser();
-  if (!user) return { stats: {}, mistakes: {} }; // Если не залогинен, пусто
-
-  const key = `hsk_data_${user}`;
-  try {
-    const raw = localStorage.getItem(key);
-    if (raw) return JSON.parse(raw);
-  } catch (e) {
-    console.error('Ошибка чтения localStorage', e);
-  }
-  return { stats: {}, mistakes: {} };
-}
-
-function saveData(data) {
-  const user = getCurrentUser();
+// === РАБОТА С ДАННЫМИ ===
+export async function addStat(testName, correct, total) {
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
-  localStorage.setItem(`hsk_data_${user}`, JSON.stringify(data));
-}
 
-export function addStat(testName, correct, total) {
-  const data = getData();
-  if (!data.stats[testName]) data.stats[testName] = [];
-  
-  data.stats[testName].push({
-    date: new Date().toISOString(),
-    correct,
-    total
+  // Теперь пишем в новую таблицу test_stats
+  await supabase.from('test_stats').insert({
+    user_id: user.id,
+    test_name: testName,
+    correct_answers: correct,
+    total_questions: total
   });
-  saveData(data);
 }
 
-export function getStats(testName) {
-  const data = getData();
-  return data.stats[testName] || [];
+export async function getStats(testName) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data } = await supabase
+    .from('test_stats') // Читаем из новой таблицы
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('test_name', testName)
+    .order('created_at', { ascending: false });
+
+  return (data || []).map(d => ({
+    date: d.created_at,
+    correct: d.correct_answers,
+    total: d.total_questions
+  }));
 }
 
-export function addMistake(testName, prompt) {
-  const data = getData();
-  if (!data.mistakes[testName]) data.mistakes[testName] = [];
-  
-  if (!data.mistakes[testName].includes(prompt)) {
-    data.mistakes[testName].push(prompt);
-    saveData(data);
+export async function addMistake(testName, prompt) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  // 1. Сначала проверяем, есть ли уже такая ошибка у пользователя
+  const { data: existing } = await supabase
+    .from('user_progress')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('test_name', testName)
+    .eq('question_id', prompt)
+    .eq('is_correct', false)
+    .limit(1);
+
+  // 2. Если ошибки нет, только тогда добавляем
+  if (!existing || existing.length === 0) {
+    await supabase.from('user_progress').insert({
+      user_id: user.id,
+      test_name: testName,
+      question_id: prompt,
+      is_correct: false
+    });
   }
 }
 
-export function removeMistake(testName, prompt) {
-  const data = getData();
-  if (!data.mistakes[testName]) return;
-  
-  data.mistakes[testName] = data.mistakes[testName].filter(p => p !== prompt);
-  if (data.mistakes[testName].length === 0) {
-    delete data.mistakes[testName];
-  }
-  saveData(data);
+export async function removeMistake(testName, prompt) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase
+    .from('user_progress')
+    .delete()
+    .eq('user_id', user.id)
+    .eq('test_name', testName)
+    .eq('question_id', prompt);
 }
 
-export function getMistakes(testName) {
-  const data = getData();
-  return data.mistakes[testName] || [];
+export async function getMistakes(testName) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data } = await supabase
+    .from('user_progress')
+    .select('question_id')
+    .eq('user_id', user.id)
+    .eq('test_name', testName)
+    .eq('is_correct', false)
+    .neq('question_id', 'STATS'); // <-- ВАЖНО: Исключаем служебную запись STATS из списка ошибок!
+
+  // Убираем дубликаты на всякий случай
+  const uniqueMistakes = [...new Set((data || []).map(d => d.question_id))];
+  return uniqueMistakes;
 }

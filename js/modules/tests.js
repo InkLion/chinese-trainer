@@ -2,16 +2,19 @@
 import { resolveQuestion, normalizeAnswer } from '../core/template.js';
 import { addStat, getStats, addMistake, removeMistake, getMistakes } from '../core/storage.js';
 
+const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
 let allTests = [];
 let currentQuestions = [];
 let currentIndex = 0;
 let correctCount = 0;
 let currentTestName = "";
-let isReviewMode = false; // Флаг: проходим ли мы тест по ошибкам
+let isReviewMode = false;
 
+// ОБЯЗАТЕЛЬНО ДОЛЖНО БЫТЬ СЛОВО export ПЕРЕД ФУНКЦИЕЙ
 export async function init(container) {
   try {
-    const res = await fetch('tests.json');
+    const res = await fetch('tests.json?v=' + new Date().getTime());
     if (!res.ok) throw new Error('Не удалось загрузить tests.json');
     allTests = await res.json();
   } catch (e) {
@@ -19,90 +22,125 @@ export async function init(container) {
     return () => {};
   }
 
-  renderTestList(container);
+  await renderTestList(container);
   return () => {}; 
 }
 
-// === ОТРИСОВКА СПИСКА ТЕСТОВ ===
-function renderTestList(container) {
+async function renderTestList(container) {
   let html = `
-    <div class="card">
-      <h1 style="text-align:center;margin-top:8px;">Тесты</h1>
-      <p class="subtitle" style="text-align:center;">Выберите тему для проверки знаний</p>
-      <div id="testGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-top: 20px;"></div>
+    <div style="min-height: 80vh; padding: 20px; animation: fadeIn 0.4s ease-out;">
+      <div style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
+        <h1 style="font-size: 48px; font-weight: 900; color: var(--gold); margin: 0; text-shadow: 0 0 30px var(--gold-glow); letter-spacing: 2px;">Тесты</h1>
+        <p style="font-size: 16px; color: var(--text-muted); margin-top: 10px;">Выберите тему для проверки знаний</p>
+      </div>
+
+      <div id="testGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
+        ${Array(6).fill(`
+          <div class="test-card" style="opacity: 0.5; pointer-events: none;">
+            <div style="width: 60%; height: 24px; background: var(--bg-hover); border-radius: 4px; margin-bottom: 12px;"></div>
+            <div style="width: 40%; height: 16px; background: var(--bg-hover); border-radius: 4px;"></div>
+          </div>
+        `).join('')}
+      </div>
     </div>
   `;
   container.innerHTML = html;
 
   const grid = container.querySelector('#testGrid');
 
-  allTests.forEach((test, index) => {
-    const mistakes = getMistakes(test.name);
-    const stats = getStats(test.name);
-    
-    // Формируем статистику для отображения
-    let statsHtml = `<div style="font-size: 13px; color: #b9a9d4; margin-top: 4px;">Вопросов: ${test.questions.length}</div>`;
-    if (stats.length > 0) {
-      const last = stats[stats.length - 1];
-      const pct = Math.round((last.correct / last.total) * 100);
-      statsHtml += `<div style="font-size: 12px; color: #f4c430; margin-top: 4px;">Последний раз: ${last.correct}/${last.total} (${pct}%)</div>`;
-    }
+  try {
+    // ЗАГРУЖАЕМ ДАННЫЕ
+    const testData = await Promise.all(allTests.map(async (test) => {
+      const [mistakes, stats] = await Promise.all([
+        getMistakes(test.name),
+        getStats(test.name)
+      ]);
+      return { test, mistakes, stats };
+    }));
 
-    const card = document.createElement('div');
-    card.className = 'player-row';
-    card.style.cssText = 'flex-direction: column; align-items: flex-start; padding: 16px;';
-    
-    // Сама карточка теста
-    card.innerHTML = `
-      <div style="width: 100%; cursor: pointer;" id="test-name-${index}">
-        <div style="font-weight: 800; font-size: 18px; color: #f4c430; margin-bottom: 8px;">${test.name}</div>
-        ${statsHtml}
-      </div>
-    `;
-    
-    // Кнопка запуска обычного теста
-    card.querySelector(`#test-name-${index}`).addEventListener('click', () => {
-      startQuiz(container, index, false);
+    grid.innerHTML = '';
+
+    // ОТРИСОВЫВАЕМ КАРТОЧКИ
+    testData.forEach((data, index) => {
+      const { test, mistakes, stats } = data;
+
+      // Формируем нижнюю строку: статистика слева, кнопка справа
+      let bottomRowHtml = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+          <div style="font-size: 14px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+            <span style="font-size: 16px;">📚</span> Вопросов: <b>${test.questions.length}</b>
+          </div>
+      `;
+
+      if (mistakes.length > 0) {
+        bottomRowHtml += `
+          <button class="review-btn-small" data-index="${index}">
+            🔄 Повторить (${mistakes.length})
+          </button>
+        `;
+      }
+      
+      bottomRowHtml += `</div>`;
+
+      // Блок с последним результатом
+      let lastResultHtml = '';
+      if (stats.length > 0) {
+        const last = stats[0];
+        lastResultHtml = `<div style="font-size: 13px; color: ${last.correct ? 'var(--success)' : 'var(--danger)'}; margin-top: 8px; background: var(--bg-card); padding: 4px 8px; border-radius: 6px; display: inline-block;">
+          Последний раз: ${last.correct ? 'Без ошибок' : 'С ошибками'}
+        </div>`;
+      }
+
+      const card = document.createElement('div');
+      card.className = 'test-card';
+      
+      card.innerHTML = `
+        <div style="cursor: pointer; width: 100%; flex: 1;" class="test-click-area">
+          <div style="font-weight: 800; font-size: 20px; color: var(--gold); margin-bottom: 10px;">${test.name}</div>
+          ${lastResultHtml}
+        </div>
+        ${bottomRowHtml}
+      `;
+
+      card.querySelector('.test-click-area').addEventListener('click', () => {
+        startQuiz(container, index, false);
+      });
+
+      const reviewBtn = card.querySelector('.review-btn-small');
+      if (reviewBtn) {
+        reviewBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          startQuiz(container, index, true);
+        });
+      }
+
+      grid.appendChild(card);
     });
 
-    // Если есть ошибки, добавляем кнопку "Повторить ошибки"
-    if (mistakes.length > 0) {
-      const reviewBtn = document.createElement('button');
-      reviewBtn.textContent = `Повторить ошибки (${mistakes.length})`;
-      reviewBtn.style.cssText = 'margin-top: 12px; font-size: 13px; padding: 6px 12px; background: rgba(255, 138, 138, 0.2); border: 1px solid #ff8a8a; color: #ff8a8a; width: 100%;';
-      reviewBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        startQuiz(container, index, true);
-      });
-      card.appendChild(reviewBtn);
-    }
-    
-    grid.appendChild(card);
-  });
+  } catch (error) {
+    grid.innerHTML = `<div style="color: var(--danger); text-align: center; grid-column: 1/-1;">Ошибка загрузки данных: ${error.message}</div>`;
+  }
 }
 
-// === ЗАПУСК ТЕСТА ===
 function startQuiz(container, testIndex, reviewMode = false) {
   const test = allTests[testIndex];
   currentTestName = test.name;
   isReviewMode = reviewMode;
-
-  if (reviewMode) {
-    const mistakes = getMistakes(test.name);
-    // Берем только те вопросы, где prompt совпадает с сохраненными ошибками
-    currentQuestions = test.questions.filter(q => mistakes.includes(q.prompt));
-  } else {
-    // Берем все вопросы и перемешиваем
-    currentQuestions = [...test.questions].sort(() => Math.random() - 0.5);
-  }
-
+  currentQuestions = [];
   currentIndex = 0;
   correctCount = 0;
 
-  showQuestion(container);
+  if (reviewMode) {
+    getMistakes(test.name).then(mistakes => {
+      currentQuestions = test.questions.filter(q => mistakes.includes(q.prompt));
+      showQuestion(container);
+    });
+  } else {
+    currentQuestions = [...test.questions].sort(() => Math.random() - 0.5);
+    showQuestion(container);
+  }
 }
 
-// === ОТРИСОВКА ВОПРОСА ===
 function showQuestion(container) {
   if (currentIndex >= currentQuestions.length) {
     showResult(container);
@@ -144,11 +182,14 @@ function showQuestion(container) {
   });
 
   if (q.qtype === 'choice') {
-    q.options.forEach(opt => {
+    const correctText = q.options[q.correct];
+    const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+    shuffledOptions.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'opt';
       btn.textContent = opt;
-      btn.onclick = () => checkAnswer(btn, opt, q.options[q.correct], nextBtn, rawQ.prompt);
+      btn.onclick = () => checkAnswer(btn, opt, correctText, nextBtn, rawQ.prompt);
       answerArea.appendChild(btn);
     });
   } 
@@ -173,7 +214,96 @@ function showQuestion(container) {
     input.addEventListener('keydown', e => { if (e.key === 'Enter') btn.click(); });
     setTimeout(() => input.focus(), 50);
   }
+  // НОВЫЙ БЛОК ДЛЯ СБОРКИ ПРЕДЛОЖЕНИЙ
+  else if (q.qtype === 'order') {
+    // Используем q.words (обработанные данные), а не rawQ
+    const pool = shuffle(q.words.map((w, i) => ({ text: w, id: i })));
+    const picked = [];
+
+    const answerBox = document.createElement('div');
+    answerBox.className = 'order-answer';
+    const poolBox = document.createElement('div');
+    poolBox.className = 'order-pool';
+    poolBox.style.marginBottom = '10px';
+    
+    answerArea.appendChild(answerBox);
+    answerArea.appendChild(poolBox);
+
+    function redraw() {
+      answerBox.innerHTML = '';
+      if (!picked.length) {
+        const h = document.createElement('span');
+        h.className = 'order-hint';
+        h.textContent = 'Нажимайте на слова ниже, чтобы составить предложение…';
+        answerBox.appendChild(h);
+      } else {
+        picked.forEach((item, idx) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'word-chip';
+          b.textContent = item.text;
+          b.onclick = () => {
+            if (nextBtn.classList.contains('hidden') === false) return;
+            picked.splice(idx, 1);
+            redraw();
+          };
+          answerBox.appendChild(b);
+        });
+      }
+
+      poolBox.innerHTML = '';
+      pool.forEach(item => {
+        if (picked.includes(item)) return;
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'word-chip';
+        b.textContent = item.text;
+        b.onclick = () => {
+          if (nextBtn.classList.contains('hidden') === false) return;
+          picked.push(item);
+          redraw();
+          check();
+        };
+        poolBox.appendChild(b);
+      });
+    }
+
+    function check() {
+      if (picked.length !== pool.length) return;
+      const built = picked.map(x => x.text);
+      
+      // Делаем так, чтобы ответ мог быть как одним массивом, так и массивом массивов
+      let validAnswers = [];
+      if (Array.isArray(q.answer[0])) {
+        // Если это массив массивов (несколько вариантов)
+        validAnswers = q.answer;
+      } else {
+        // Если это просто один массив строк
+        validAnswers = [q.answer];
+      }
+
+      // Проверяем, совпадает ли собранное предложение хотя бы с одним из вариантов
+      const ok = validAnswers.some(ans => 
+        built.length === ans.length && built.every((w, i) => w === ans[i])
+      );
+      
+      answerArea.querySelectorAll('button').forEach(b => b.disabled = true);
+      poolBox.querySelectorAll('button').forEach(b => b.disabled = true);
+
+      // Для показа правильного ответа берем первый вариант из списка
+      const displayAnswer = validAnswers[0].join(' ');
+
+      if (ok) {
+        finishQuestion(true, nextBtn, displayAnswer, rawQ.prompt);
+      } else {
+        finishQuestion(false, nextBtn, displayAnswer, rawQ.prompt);
+      }
+    }
+
+    redraw();
+  }
   else if (q.qtype === 'fill') {
+    // ... (код fill оставьте без изменений) ...
     const parts = q.fill_text.split('{}');
     const inputs = [];
     const wrapper = document.createElement('div');
@@ -216,6 +346,7 @@ function showQuestion(container) {
     if(inputs.length > 0) setTimeout(() => inputs[0].focus(), 50);
   }
   else if (q.qtype === 'match') {
+    // ... (код match оставьте без изменений) ...
     const leftCol = document.createElement('div');
     leftCol.className = 'match-col';
     const rightCol = document.createElement('div');
@@ -289,7 +420,8 @@ function showQuestion(container) {
 }
 
 function checkAnswer(btn, userAns, correctAns, nextBtn, rawPrompt) {
-  const isCorrect = normalizeAnswer(userAns) === normalizeAnswer(correctAns);
+  const validAnswers = String(correctAns).split('/').map(a => normalizeAnswer(a.trim()));
+  const isCorrect = validAnswers.includes(normalizeAnswer(userAns));
   
   if (btn) {
     btn.disabled = true;
@@ -298,7 +430,9 @@ function checkAnswer(btn, userAns, correctAns, nextBtn, rawPrompt) {
       else {
         btn.classList.add('wrong');
         const allBtns = Array.from(btn.parentElement.querySelectorAll('.opt'));
-        const correctBtn = allBtns.find(b => b.textContent === correctAns);
+        // Ищем правильную кнопку (берем первый вариант, если их несколько)
+        const correctText = String(correctAns).split('/')[0].trim();
+        const correctBtn = allBtns.find(b => b.textContent === correctText);
         if (correctBtn) correctBtn.classList.add('correct');
       }
     }
@@ -307,32 +441,27 @@ function checkAnswer(btn, userAns, correctAns, nextBtn, rawPrompt) {
   finishQuestion(isCorrect, nextBtn, correctAns, rawPrompt);
 }
 
-function finishQuestion(isCorrect, nextBtn, correctAnsText = '', rawPrompt = '') {
+async function finishQuestion(isCorrect, nextBtn, correctAnsText = '', rawPrompt = '') {
   nextBtn.classList.remove('hidden');
 
   const fb = document.getElementById('feedback');
   if (isCorrect) {
     correctCount++;
     fb.textContent = '✅ Верно!';
-    fb.style.color = '#7ef0b0';
-    
-    // Если ответ верный — УДАЛЯЕМ вопрос из списка ошибок
-    if (rawPrompt) removeMistake(currentTestName, rawPrompt);
-    
+    fb.style.color = 'var(--success)';
+    // Ждем, пока база данных удалит ошибку
+    if (rawPrompt) await removeMistake(currentTestName, rawPrompt);
   } else {
     fb.textContent = `❌ Неверно. ${correctAnsText ? correctAnsText : ''}`;
-    fb.style.color = '#ff8a8a';
-    
-    // Если ответ неверный — ДОБАВЛЯЕМ вопрос в список ошибок
-    if (rawPrompt) addMistake(currentTestName, rawPrompt);
+    fb.style.color = 'var(--danger)';
+    // Ждем, пока база данных добавит ошибку
+    if (rawPrompt) await addMistake(currentTestName, rawPrompt);
   }
 }
 
 function showResult(container) {
   const pct = Math.round((correctCount / currentQuestions.length) * 100);
   
-  // Сохраняем статистику попытки (только если это не режим повторения ошибок)
-  // Или можно сохранять всегда, но давайте сохранять только полные тесты
   if (!isReviewMode) {
     addStat(currentTestName, correctCount, currentQuestions.length);
   }

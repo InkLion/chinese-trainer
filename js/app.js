@@ -1,41 +1,113 @@
-// Убрали импорт gameInit, так как скрываем игру
 import { init as testsInit } from './modules/tests.js';
 import { init as jeopardyInit } from './modules/jeopardy.js';
 import { init as profileInit } from './modules/profile.js';
 import { getCurrentUser, logout } from './core/storage.js';
+import { init as flashcardsInit } from './modules/flashcards.js';
+import { init as settingsInit } from './modules/settings.js';
+import { initFeedbackWidget } from './core/feedback.js';
+
+const savedTheme = localStorage.getItem('theme') || 'dark';
+const savedFontSize = localStorage.getItem('fontSize') || '16';
+document.documentElement.setAttribute('data-theme', savedTheme);
+document.documentElement.style.fontSize = savedFontSize + 'px';
 
 const app = document.getElementById('app');
 const nav = document.getElementById('app-nav');
-const userBar = document.getElementById('user-bar');
+const header = document.querySelector('.app-header');
 
 const routes = {
   '':         homeView,
   'login':    profileInit,
   'tests':    testsInit,
   'jeopardy': jeopardyInit,
-  // 'game':  gameInit,  <-- ИГРА ОТКЛЮЧЕНА
+  'flashcards': flashcardsInit,
+  'settings': settingsInit,
 };
 
 let currentCleanup = null;
 let navId = 0;
 
-function homeView(container) {
-  const user = getCurrentUser();
-  container.innerHTML = `
-    <div class="card">
-      <h1 style="text-align:center;margin-top:8px;">Привет, ${user}!</h1>
-      <p class="subtitle" style="text-align:center;">Выберите активность в меню сверху 👆</p>
-    </div>
-  `;
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Доброе утро';
+  if (hour >= 12 && hour < 18) return 'Добрый день';
+  if (hour >= 18 && hour < 23) return 'Добрый вечер';
+  return 'Доброй ночи';
 }
 
-function notReady(container) {
+function homeView(container) {
+  const user = getCurrentUser();
+  const greeting = getGreeting();
+
   container.innerHTML = `
-    <div class="card">
-      <h1>Скоро</h1>
-      <p class="subtitle">Этот модуль в разработке.</p>
+    <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.5s ease-out;">
+      
+      <!-- Мини-профиль в углу -->
+      <div style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 15px; background: var(--bg-panel); padding: 8px 16px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+        
+        <span style="color: var(--gold); font-weight: bold; margin-right: 5px;">👤 ${user}</span>
+        
+        <div style="display: flex; gap: 8px;">
+          <a href="#/settings" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main); text-decoration: none; transition: 0.2s; display: flex; align-items: center;">
+            ⚙️ Настройки
+          </a>
+          
+          <button id="logoutBtnHome" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main); transition: 0.2s;">Выйти</button>
+        </div>
+
+      </div>
+
+      <!-- Заголовок -->
+      <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="font-size: 72px; font-weight: 900; color: var(--gold); margin: 0; text-shadow: 0 0 40px var(--gold-glow); letter-spacing: 6px;">汉语</h1>
+        <div style="font-size: 20px; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 8px;">Тренажёр</div>
+      </div>
+
+      <!-- Приветствие -->
+      <h2 style="font-size: 28px; margin-bottom: 50px; font-weight: 400; text-align: center; color: var(--text-main);">
+        ${greeting}, <span style="color: var(--gold); font-weight: 800;">${user}</span>!
+      </h2>
+
+      <!-- Карточки навигации -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; max-width: 800px;">
+        
+        <!-- Тесты -->
+        <a href="#/tests" class="menu-card">
+          <div>📝</div>
+          <div>Тесты</div>
+          <div>Проверка слов, чисел, времени и грамматики</div>
+        </a>
+
+        <!-- Своя игра -->
+        <a href="#/jeopardy" class="menu-card">
+          <div>🎯</div>
+          <div>Своя игра</div>
+          <div>Викторина для игры в компании</div>
+        </a>
+
+        <!-- Карточки -->
+        <a href="#/flashcards" class="menu-card">
+          <div>🃏</div>
+          <div>Карточки</div>
+          <div>Запоминание слов с помощью флеш-карточек</div>
+        </a>
+
+        <!-- Заглушка (Прописи) -->
+        <a href="#" class="menu-card" style="opacity: 0.5; cursor: not-allowed;" onclick="event.preventDefault(); alert('Этот раздел находится в разработке! 🚧');">
+          <div style="filter: grayscale(1);">✍️</div>
+          <div>WIP</div>
+          <div></div>
+        </a>
+
+      </div>
     </div>
   `;
+
+  document.getElementById('logoutBtnHome').addEventListener('click', () => {
+    logout();
+    window.location.hash = '#/login';
+    window.location.reload();
+  });
 }
 
 async function route() {
@@ -49,6 +121,18 @@ async function route() {
     return;
   }
 
+  // Скрываем шапку на логине и на главной
+  if (name === 'login' || name === '') {
+    if (header) header.style.display = 'none';
+  } else {
+    if (header) header.style.display = 'flex';
+    
+    // Подсветка активной вкладки в меню
+    [...nav.querySelectorAll('a')].forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#/' + name);
+    });
+  }
+
   if (currentCleanup) {
     try { currentCleanup(); } catch (e) { console.error(e); }
     currentCleanup = null;
@@ -57,28 +141,7 @@ async function route() {
   const container = document.createElement('div');
   app.replaceChildren(container);
 
-  if (user) {
-    userBar.innerHTML = `
-      <span style="color: var(--gold); font-weight: bold; margin-right: 10px;">👤 ${user}</span>
-      <button id="logoutBtn" style="padding: 4px 10px; font-size: 12px; background: transparent; border: 1px solid var(--border);">Выйти</button>
-    `;
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      logout();
-      window.location.hash = '#/login';
-      window.location.reload();
-    });
-    nav.style.display = 'flex';
-  } else {
-    userBar.innerHTML = '';
-    nav.style.display = 'none';
-  }
-
-  [...nav.querySelectorAll('a')].forEach(a => {
-    a.classList.toggle('active', a.getAttribute('href') === '#/' + name);
-  });
-
-  // Если кто-то вручную введет #/game, покажем заглушку
-  const view = routes[name] || (name === 'game' ? notReady : homeView);
+  const view = routes[name] || homeView;
   
   let result;
   try {
@@ -97,8 +160,5 @@ async function route() {
   currentCleanup = typeof result === 'function' ? result : null;
 }
 
-// ФИКС ОШИБКИ startTime:
-// Оборачиваем в setTimeout, чтобы браузер сначала завершил 
-// свои внутренние процессы клика, а потом мы меняли DOM.
 window.addEventListener('hashchange', () => setTimeout(route, 0));
-window.addEventListener('DOMContentLoaded', () => setTimeout(route, 0));
+window.addEventListener('DOMContentLoaded', () => {setTimeout(route, 0); initFeedbackWidget();});

@@ -21,20 +21,22 @@ export function init(container) {
 // === НАСТРОЙКА ИГРЫ ===
 function renderSetup(container) {
   container.innerHTML = `
-    <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
-      <h1 style="color: var(--gold);">Своя игра</h1>
-      <p class="subtitle">Выберите количество игроков и введите их имена</p>
-      
-      <select id="playerCount" class="fill-input" style="margin-bottom: 20px;">
-        <option value="1">1 игрок</option>
-        <option value="2" selected>2 игрока</option>
-        <option value="3">3 игрока</option>
-        <option value="4">4 игрока</option>
-      </select>
+    <div style="min-height: 80vh; padding: 20px; animation: fadeIn 0.4s ease-out;">
+      <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+        <h1 style="color: var(--gold); margin-bottom: 8px;">Своя игра</h1>
+        <p class="subtitle">Выберите количество игроков и введите их имена</p>
+        
+        <select id="playerCount" class="fill-input" style="margin-bottom: 20px;">
+          <option value="1">1 игрок</option>
+          <option value="2" selected>2 игрока</option>
+          <option value="3">3 игрока</option>
+          <option value="4">4 игрока</option>
+        </select>
 
-      <div id="namesContainer" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></div>
+        <div id="namesContainer" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;"></div>
 
-      <button id="startJeopardyBtn" class="primary">Начать игру</button>
+        <button id="startJeopardyBtn" class="primary">Начать игру</button>
+      </div>
     </div>
   `;
 
@@ -93,10 +95,11 @@ function generateBoard() {
 
 // === ОТРИСОВКА ПОЛЯ ===
 function renderBoard() {
+  // 1. Шапка с темами (выводим отдельно, чтобы она была ровно над колонками)
   let headerHtml = `
     <div style="display: grid; grid-template-columns: repeat(${COLS}, 1fr); gap: 10px; margin-bottom: 20px;">
       ${boardData.map(cat => `
-        <div style="background: rgba(244,196,48,.15); border: 1px solid var(--gold); padding: 15px; text-align: center; font-weight: bold; color: var(--gold); border-radius: 10px; font-size: 13px;">
+        <div class="jeopardy-header" style="background: rgba(244,196,48,.15); border: 1px solid var(--gold); padding: 15px; text-align: center; font-weight: bold; color: var(--gold); border-radius: 10px; font-size: 13px;">
           ${cat.name}
         </div>
       `).join('')}
@@ -108,16 +111,15 @@ function renderBoard() {
     for (let col = 0; col < COLS; col++) {
       const q = boardData[col].questions[row];
       
-      // Если вопрос уже сыгран, рисуем пустую прозрачную клетку
       if (q.isAnswered) {
+        // Пустая клетка
         cellsHtml += `
           <div style="background: transparent; border: 1px solid rgba(255,255,255,0.05); padding: 20px 10px; border-radius: 10px;"></div>
         `;
       } else {
-        // Иначе рисуем активную кнопку
+        // Используем класс .jeopardy-cell вместо инлайн-стилей
         cellsHtml += `
-          <button class="jeopardy-cell" data-col="${col}" data-row="${row}" 
-            style="background: #2c1533; border: 1px solid var(--border); color: #fff; font-size: 24px; font-weight: bold; padding: 20px 10px; border-radius: 10px; cursor: pointer; transition: 0.2s;">
+          <button class="jeopardy-cell" data-col="${col}" data-row="${row}">
             ${q.value}
           </button>
         `;
@@ -128,28 +130,30 @@ function renderBoard() {
   // Отрисовка таблицы игроков
   const currentP = players[currentPlayerIndex];
   let playersHtml = players.map((p, i) => `
-    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 10px; background: ${i === currentPlayerIndex ? 'rgba(244,196,48,.15)' : 'rgba(255,255,255,.05)'}; border: 1px solid ${i === currentPlayerIndex ? 'var(--gold)' : 'transparent'};">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 10px; background: ${i === currentPlayerIndex ? 'var(--gold-glow)' : 'var(--bg-card)'}; border: 1px solid ${i === currentPlayerIndex ? 'var(--gold)' : 'var(--border-color)'};">
       <span class="dot" style="background:${p.color}; width:12px; height:12px; border-radius:50%;"></span>
-      <span style="font-weight: ${i === currentPlayerIndex ? 'bold' : 'normal'}; color: ${i === currentPlayerIndex ? 'var(--gold)' : '#fff'};">${p.name}</span>
-      <span style="margin-left: auto; font-weight: bold; color: #4cc9a0;">${p.score}</span>
+      <span style="font-weight: ${i === currentPlayerIndex ? 'bold' : 'normal'}; color: ${i === currentPlayerIndex ? 'var(--gold)' : 'var(--text-main)'};">${p.name}</span>
+      <span style="margin-left: auto; font-weight: bold; color: var(--success);">${p.score}</span>
     </div>
   `).join('');
 
-  containerRef.innerHTML = `
-    <div class="card" style="padding: 20px; max-width: 1000px; margin: 0 auto;">
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px;">
-        <div style="flex: 1;">
-          <h1 style="margin: 0; color: var(--gold);">Своя игра</h1>
-          <div style="margin-top: 10px; font-size: 14px; color: #b9a9d4;">Сейчас ходит: <b style="color:${currentP.color}">${currentP.name}</b></div>
+containerRef.innerHTML = `
+    <div style="min-height: 80vh; padding: 20px; animation: fadeIn 0.4s ease-out;">
+      <div class="card" style="padding: 20px; max-width: 1000px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px;">
+          <div style="flex: 1;">
+            <h1 style="margin: 0; color: var(--gold);">Своя игра</h1>
+            <div style="margin-top: 10px; font-size: 14px; color: #b9a9d4;">Сейчас ходит: <b style="color:${currentP.color}">${currentP.name}</b></div>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
+            ${playersHtml}
+          </div>
         </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end;">
-          ${playersHtml}
+        
+        ${headerHtml}
+        <div id="jeopardyGrid" style="display: grid; grid-template-columns: repeat(${COLS}, 1fr); gap: 10px;">
+          ${cellsHtml}
         </div>
-      </div>
-      
-      ${headerHtml}
-      <div id="jeopardyGrid" style="display: grid; grid-template-columns: repeat(${COLS}, 1fr); gap: 10px;">
-        ${cellsHtml}
       </div>
     </div>
   `;
@@ -246,18 +250,20 @@ function showEndScreen() {
   const medals = ['🥇', '🥈', '🥉'];
 
   containerRef.innerHTML = `
-    <div class="card" style="text-align: center; max-width: 600px; margin: 0 auto;">
-      <h1 style="color: var(--gold);">Игра окончена!</h1>
-      <div style="margin: 30px 0; display: flex; flex-direction: column; gap: 10px;">
-        ${sorted.map((p, i) => `
-          <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: ${i === 0 ? 'rgba(244,196,48,.2)' : 'rgba(255,255,255,.05)'}; border-radius: 10px; border: 1px solid ${i === 0 ? 'var(--gold)' : 'transparent'};">
-            <span style="font-size: 20px;">${medals[i] || (i+1) + '.'}</span>
-            <span style="font-weight: bold; color: ${p.color};">${p.name}</span>
-            <span style="font-weight: bold; font-size: 20px; color: #4cc9a0;">${p.score}</span>
-          </div>
-        `).join('')}
+    <div style="min-height: 80vh; padding: 20px; animation: fadeIn 0.4s ease-out;">
+      <div class="card" style="text-align: center; max-width: 600px; margin: 0 auto;">
+        <h1 style="color: var(--gold);">Игра окончена!</h1>
+        <div style="margin: 30px 0; display: flex; flex-direction: column; gap: 10px;">
+          ${sorted.map((p, i) => `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; background: ${i === 0 ? 'rgba(244,196,48,.2)' : 'rgba(255,255,255,.05)'}; border-radius: 10px; border: 1px solid ${i === 0 ? 'var(--gold)' : 'transparent'};">
+              <span style="font-size: 20px;">${medals[i] || (i+1) + '.'}</span>
+              <span style="font-weight: bold; color: ${p.color};">${p.name}</span>
+              <span style="font-weight: bold; font-size: 20px; color: #4cc9a0;">${p.score}</span>
+            </div>
+          `).join('')}
+        </div>
+        <button id="restartJeopardyBtn" class="primary">Играть снова</button>
       </div>
-      <button id="restartJeopardyBtn" class="primary">Играть снова</button>
     </div>
   `;
 
