@@ -2,40 +2,26 @@
    БАЗОВЫЕ ПЕРЕМЕННЫЕ (ТЕМЫ)
    ========================================================= */
 :root {
-  /* Темная тема (по умолчанию) */
   --bg-body: radial-gradient(circle at 15% 0%, #2c1533 0%, #140a1c 55%, #0a0610 100%);
   --bg-panel: rgba(255, 255, 255, 0.06);
   --bg-card: rgba(255, 255, 255, 0.03);
   --bg-hover: rgba(255, 255, 255, 0.1);
-  
   --text-main: #f3ecff;
   --text-muted: #b9a9d4;
-  
   --gold: #f4c430;
   --gold-glow: rgba(244, 196, 48, 0.4);
   --border-color: rgba(255, 255, 255, 0.14);
-  
   --danger: #ff8a8a;
   --success: #4cc9a0;
-  --primary-btn: linear-gradient(180deg, #e63946, #b81f2c);
-  --primary-btn-border: #ff6b6b;
-
-  /* Карточки */
-  --card-front-bg: linear-gradient(160deg, #3a2350, #241533);
-  --card-back-bg: linear-gradient(160deg, #1a2a3a, #101a25);
-  
-  /* Тени */
-  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.6);
-
   --primary-btn: linear-gradient(180deg, #f4c430, #d4a017);
   --primary-btn-border: #ffd75e;
   --primary-btn-text: #2c1533;
   --primary-btn-shadow: rgba(244, 196, 48, 0.3);
-
-  --danger: #e63946;
-  --success: #2a9d8f;
+  --card-front-bg: linear-gradient(160deg, #3a2350, #241533);
+  --card-back-bg: linear-gradient(160deg, #1a2a3a, #101a25);
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme="light"] {
@@ -43,46 +29,29 @@
   --bg-panel: #ffffff;
   --bg-card: #f8f8fb;
   --bg-hover: rgba(0, 0, 0, 0.05);
-  
   --text-main: #2c1533;
   --text-muted: #6b5b7b;
-  
-  /* МЕНЯЕМ ЗОЛОТОЙ НА ФИОЛЕТОВЫЙ */
   --gold: #7e57c2; 
   --gold-glow: rgba(126, 87, 194, 0.2);
   --border-color: rgba(0, 0, 0, 0.12);
-  
   --danger: #d32f2f;
   --success: #2e7d32;
-
   --card-front-bg: linear-gradient(160deg, #f9f9f9, #e0e0e0);
   --card-back-bg: linear-gradient(160deg, #e3f2fd, #bbdefb);
-  
-  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.15);
-
-  /* Кнопки делаем в тон акценту */
   --primary-btn: linear-gradient(180deg, #9575cd, #673ab7);
   --primary-btn-border: #b39ddb;
   --primary-btn-text: #ffffff;
   --primary-btn-shadow: rgba(103, 58, 183, 0.3);
+  --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 12px 30px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 24px 70px rgba(0, 0, 0, 0.15);
 }
 
 /* =========================================================
-   БАЗОВЫЕ СТИЛИ И ШРИФТЫ
+   БАЗА
    ========================================================= */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  font-size: 16px; /* База для rem (меняется через настройки JS) */
-  transition: font-size 0.2s ease;
-}
-
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; transition: font-size 0.2s ease; }
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   background: var(--bg-body);
@@ -90,555 +59,83 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   transition: background 0.3s ease, color 0.3s ease;
-  overscroll-behavior-x: none; /* Запрещает нативный свайп "назад" по краям экрана */
+  overscroll-behavior-x: none; 
 }
-
 h1 { font-size: 2.5rem; color: var(--gold); letter-spacing: 1px; }
 h2 { font-size: 1.75rem; }
 h3 { font-size: 1.25rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
-
 a { color: var(--gold); text-decoration: none; }
 
-/* =========================================================
-   ШАПКА САЙТА
-   ========================================================= */
+/* ШАПКА */
 .app-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  padding: 0.75rem max(1.5rem, 4vw);
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border-color);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-sm);
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 2rem; padding: 0.75rem max(1.5rem, 4vw);
+  background: var(--bg-panel); border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px); box-shadow: var(--shadow-sm);
 }
-
-.app-header .logo {
-  color: var(--gold);
-  font-weight: 900;
-  font-size: 1.5rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 15px var(--gold-glow);
-  transition: 0.2s;
-}
-
-.app-header .logo:hover { text-shadow: 0 0 25px var(--gold); }
-
+.app-header .logo { color: var(--gold); font-weight: 900; font-size: 1.5rem; text-shadow: 0 0 15px var(--gold-glow); }
 .app-header nav { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.app-header nav a { color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 1.5rem; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; border: 1px solid transparent; }
+.app-header nav a:hover, .app-header nav a.active { background: var(--gold-glow); color: var(--gold); border-color: var(--gold); }
 
-.app-header nav a {
-  color: var(--text-muted);
-  padding: 0.5rem 1rem;
-  border-radius: 1.5rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-}
-
-.app-header nav a:hover { background: var(--bg-hover); color: var(--text-main); }
-.app-header nav a.active {
-  background: var(--gold-glow);
-  color: var(--gold);
-  border-color: var(--gold);
-}
-
-/* =========================================================
-   ОБЩИЕ КОМПОНЕНТЫ (КАРТОЧКИ, КНОПКИ, ИНПУТЫ)
-   ========================================================= */
+/* ОБЩИЕ ЭЛЕМЕНТЫ */
 #app { padding: 1.5rem; }
-
-.card, .panel {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  backdrop-filter: blur(6px);
-  box-shadow: var(--shadow-sm);
-  transition: background 0.3s ease;
-}
-
-button {
-  font-family: inherit;
-  font-size: 1rem;
-  cursor: pointer;
-  border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  background: var(--bg-hover);
-  color: var(--text-main);
-  transition: all 0.2s ease;
-}
-
+.card, .panel { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); }
+button { font-family: inherit; font-size: 1rem; cursor: pointer; border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem 1.25rem; background: var(--bg-hover); color: var(--text-main); transition: all 0.2s; }
 button:hover:not(:disabled) { background: var(--border-color); transform: translateY(-1px); }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
+button.primary { background: var(--primary-btn); border: 1px solid var(--primary-btn-border); color: var(--primary-btn-text); font-weight: 700; width: 100%; font-size: 1.1rem; box-shadow: 0 8px 22px var(--primary-btn-shadow); }
+.fill-input, select, input[type="text"] { width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; }
+.fill-input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 2px var(--gold-glow); }
 
-button.primary {
-  background: var(--primary-btn);
-  border: 1px solid var(--primary-btn-border);
-  color: var(--primary-btn-text);
-  font-weight: 700;
-  width: 100%;
-  font-size: 1.1rem;
-  box-shadow: 0 8px 22px var(--primary-btn-shadow);
-  text-shadow: none;
-}
-
-.fill-input, select, input[type="text"] {
-  width: 100%;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-  border-radius: 0.75rem;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  font-family: inherit;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.fill-input:focus, select:focus, input[type="text"]:focus {
-  border-color: var(--gold);
-  outline: none;
-  box-shadow: 0 0 0 2px var(--gold-glow);
-}
-
-/* Главная страница */
-.menu-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2.5rem 1.5rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 1.5rem;
-  transition: all 0.3s ease;
-  text-align: center;
-}
-
-.menu-card:hover {
-  background: var(--gold-glow);
-  border-color: var(--gold);
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
-}
-
+/* ГЛАВНАЯ */
+.menu-card { display: flex; flex-direction: column; align-items: center; padding: 2.5rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1.5rem; text-align: center; transition: all 0.3s; }
+.menu-card:hover { background: var(--gold-glow); border-color: var(--gold); transform: translateY(-5px); box-shadow: var(--shadow-md); }
 .menu-card > div:first-child { font-size: 3.5rem; margin-bottom: 1rem; filter: drop-shadow(0 0 10px var(--gold-glow)); }
 .menu-card > div:nth-child(2) { font-size: 1.5rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem; }
 .menu-card > div:nth-child(3) { font-size: 1rem; color: var(--text-muted); }
 
-/* =========================================================
-   МОДУЛЬ ТЕСТОВ
-   ========================================================= */
-.test-card {
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* Растягиваем карточку на всю высоту ячейки */
-  padding: 1.5rem;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
-}
+/* ТЕСТЫ */
+.test-card { display: flex; flex-direction: column; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1rem; transition: all 0.3s; }
+.test-card:hover { background: var(--bg-hover); border-color: var(--gold); transform: translateY(-5px); box-shadow: var(--shadow-md); }
+.match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.match-col { display: flex; flex-direction: column; gap: 0.5rem; }
+.match-item { padding: 0.75rem; text-align: center; background: var(--bg-hover); border-radius: 0.5rem; border: 1px solid var(--border-color); min-height: 3.5rem; display: flex; align-items: center; justify-content: center; }
+.match-item.selected { border-color: var(--gold); background: var(--gold-glow); }
+.match-item.matched { background: rgba(76, 201, 160, 0.2); border-color: var(--success); color: var(--success); }
+.match-item.wrong { background: rgba(230, 57, 70, 0.2); border-color: var(--danger); color: var(--danger); }
 
-.test-card:hover {
-  border-color: var(--gold);
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
-}
-
-.test-card .test-title { font-weight: 800; font-size: 1.25rem; color: var(--gold); margin-bottom: 0.5rem; }
-.test-card .test-stats { font-size: 0.9rem; color: var(--text-muted); }
-
-.test-card .test-click-area {
-  flex: 1; 
-  cursor: pointer;
-}
-
-.review-btn {
-  margin-top: auto;
-  padding: 0.75rem;
-  font-size: 0.95rem;
-  font-weight: 600;
-  background: rgba(230, 57, 70, 0.1);
-  border: 1px solid var(--danger);
-  color: var(--danger);
-  border-radius: 0.5rem;
-  transition: 0.2s;
-}
-
-.review-btn:hover { background: rgba(230, 57, 70, 0.2); transform: none; }
-
-.q-text { font-size: 1.4rem; line-height: 1.5; margin-bottom: 1.5rem; font-weight: 600; }
-.q-text b { color: var(--gold); }
-
-.opt { text-align: left; padding: 1rem 1.25rem; font-size: 1.1rem; background: var(--bg-hover); }
-.opt.correct { background: rgba(76, 201, 160, 0.2); border-color: var(--success); color: var(--success); }
-.opt.wrong { background: rgba(230, 57, 70, 0.2); border-color: var(--danger); color: var(--danger); }
-
-/* Сборка предложений */
-.order-answer {
-  min-height: 4rem; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
-  padding: 1rem; border: 2px dashed var(--border-color); border-radius: 1rem;
-  margin-bottom: 1rem; background: var(--bg-card);
-}
-.word-chip { padding: 0.5rem 1rem; font-size: 1.1rem; background: var(--bg-hover); border: 1px solid var(--border-color); }
-.word-chip:hover { background: var(--gold); color: #000; }
-
-/* Пары */
-.match-grid { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 1rem; 
-  align-items: start; /* Выравниваем колонки по верхнему краю */
-}
-
-.match-col { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 0.5rem; 
-  width: 100%;
-}
-
-.match-item { 
-  padding: 0.75rem 1rem; 
-  text-align: center; 
-  font-size: 1rem; 
-  background: var(--bg-hover); 
-  border-radius: 0.5rem; 
-  border: 1px solid var(--border-color); /* Добавили рамку для четкости */
-  width: 100%;
-  min-height: 3.5rem; /* Жестко задаем минимальную высоту */
-  display: flex; 
-  align-items: center; /* Центрируем текст по вертикали */
-  justify-content: center; /* Центрируем текст по горизонтали */
-  box-sizing: border-box;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.match-item:hover {
-  background: var(--border-color);
-}
-
-.match-item.selected { 
-  border-color: var(--gold); 
-  background: var(--gold-glow); 
-}
-
-.match-item.matched { 
-  background: rgba(76, 201, 160, 0.2); 
-  border-color: var(--success); 
-  color: var(--success); 
-  pointer-events: none; 
-}
-
-.match-item.wrong { 
-  background: rgba(230, 57, 70, 0.2); 
-  border-color: var(--danger); 
-  color: var(--danger); 
-}
+/* СВОЯ ИГРА */
+.jeopardy-cell { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--gold); font-size: 1.5rem; font-weight: bold; padding: 1.5rem 0.5rem; border-radius: 0.75rem; }
+.jeopardy-cell:hover { background: var(--gold-glow); border-color: var(--gold); transform: scale(1.05); box-shadow: var(--shadow-md); }
 
 /* =========================================================
-   СВОЯ ИГРА
+   ФЛЕШ-КАРТОЧКИ (ДЕСКТОПНАЯ ВЕРСИЯ)
    ========================================================= */
-.jeopardy-cell {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  color: var(--gold);
-  font-size: 1.5rem;
-  font-weight: bold;
-  padding: 1.5rem 0.5rem;
-  border-radius: 0.75rem;
-  transition: all 0.2s ease;
-}
+body.flashcards-active { overflow: hidden !important; }
 
-.jeopardy-cell:hover:not(:disabled) {
-  background: var(--gold-glow);
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: scale(1.05);
-  box-shadow: var(--shadow-md);
-}
-
-/* =========================================================
-   КАРТОЧКИ (FLASHCARDS)
-   ========================================================= */
-.deck-pile {
-  width: 7.5rem;
-  height: 11rem;
-  background: var(--bg-panel);
-  border: 2px dashed var(--border-color);
-  border-radius: 1rem;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
-}
-
-.flashcard-inner {
-  box-shadow: var(--shadow-md);
-  border-radius: 1.25rem;
-  cursor: pointer;
-}
-
-/* Стили для самих карточек (перед и зад) */
-.flashcard-front {
-  background: var(--card-front-bg);
-  border: 2px solid var(--gold);
-  border-radius: 1.25rem;
-  box-shadow: var(--shadow-md);
-}
-
-.flashcard-back {
-  background: var(--card-back-bg);
-  border: 2px solid #3a86ff;
-  border-radius: 1.25rem;
-  box-shadow: var(--shadow-md);
-}
-
-/* Цвет иероглифа (в темной - белый, в светлой - черный) */
-.hanzi-display {
-  font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
-  font-size: 4rem;
-  font-weight: 500;
-  letter-spacing: 0.1rem;
-  color: var(--text-main); /* <-- Это решит проблему с невидимым текстом */
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  line-height: 1.2;
-  text-align: center;
-}
-
-/* =========================================================
-   МОДАЛЬНЫЕ ОКНА (Игра)
-   ========================================================= */
-.overlay {
-  position: fixed; inset: 0; z-index: 50;
-  background: rgba(8, 4, 14, 0.85);
-  display: flex; align-items: center; justify-content: center;
-  padding: 1rem;
-}
-
-.modal-card {
-  width: 100%; 
-  max-width: 38rem;
-  
-  /* Задаем плотный, непрозрачный фон для темной темы */
-  background: #1e122b; 
-  
-  border: 1px solid var(--gold-glow);
-  border-radius: 1.25rem;
-  padding: 1.5rem;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9); /* Усилили тень, чтобы окно "висело" над игрой */
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-/* Добавляем непрозрачный фон для светлой темы */
-[data-theme="light"] .modal-card {
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-/* =========================================================
-   АНИМАЦИИ
-   ========================================================= */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hidden { display: none !important; }
-
-/* --- Улучшение "Своей игры" для светлой темы --- */
-[data-theme="light"] .jeopardy-cell {
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  color: var(--gold); /* Теперь цвет берется из переменной (фиолетовый) */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-[data-theme="light"] .jeopardy-cell:hover {
-  background: var(--gold-glow); /* Фиолетовая подсветка при наведении */
-  border-color: var(--gold);
-  color: var(--gold);
-}
-
-/* Заголовки тем (категории) */
-[data-theme="light"] .jeopardy-header {
-  background: var(--gold-glow) !important;
-  border: 1px solid var(--gold) !important;
-  color: var(--gold) !important;
-  font-weight: 800;
-}
-
-/* Маленькая кнопка "Повторить" */
-.review-btn-small {
-  padding: 6px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  background: rgba(230, 57, 70, 0.08);
-  border: 1px solid var(--danger);
-  color: var(--danger);
-  border-radius: 8px;
-  transition: 0.2s;
-  white-space: nowrap;
-  cursor: pointer;
-}
-
-.review-btn-small:hover {
-  background: rgba(230, 57, 70, 0.15);
-  transform: translateY(-1px);
-}
-
-/* В светлой теме чекбоксы тоже сделаем фиолетовыми */
-[data-theme="light"] input[type="checkbox"] {
-  accent-color: var(--gold);
-}
-
-/* Виджет обратной связи */
-#feedbackWidget {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-#feedbackToggleBtn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--primary-btn);
-  color: var(--primary-btn-text);
-  font-size: 24px;
-  border: 1px solid var(--primary-btn-border);
-  box-shadow: var(--shadow-md);
-  cursor: pointer;
-  transition: transform 0.2s;
-  display: flex; align-items: center; justify-content: center;
-}
-#feedbackToggleBtn:hover { transform: scale(1.1); }
-
-#feedbackModal {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 1001;
-}
-
-.feedback-card {
-  background: #1e122b; /* Плотный темный фон для темной темы */
-  border: 1px solid var(--border-color);
-  padding: 20px;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.8); /* Добавили глубокую тень */
-  position: relative;
-  z-index: 1002;
-}
-
-/* Отдельный стиль для светлой темы */
-[data-theme="light"] .feedback-card {
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-#feedbackModal.hidden { display: none; }
-
-/* Исправление выпадающих списков в темной теме */
-select option {
-  background-color: #2c1533; /* Темный фон */
-  color: #f3ecff; /* Светлый текст */
-}
-
-[data-theme="light"] select option {
-  background-color: #ffffff;
-  color: #2c1533;
-}
-
-/* =========================================================
-   ТЕЛЕФОНЫ (до 480px)
-   ========================================================= */
-@media (max-width: 480px) {
-  /* --- Общие стили --- */
-  h1 { font-size: 2rem; }
-  body { overscroll-behavior-x: none; }
-
-  /* --- Шапка сайта --- */
-  .app-header {
-    flex-direction: column;
-    padding: 10px;
-    gap: 10px;
-  }
-  .app-header nav { justify-content: center; width: 100%; }
-  .app-header .logo { margin-right: 0; font-size: 1.25rem; }
-
-  /* --- Профиль на главной --- */
-  .home-profile-box {
-    position: relative !important;
-    top: auto !important;
-    right: auto !important;
-    margin-bottom: 20px;
-    justify-content: center;
-    padding: 5px 8px !important;
-    gap: 5px !important;
-  }
-  .profile-btn { padding: 4px 8px !important; font-size: 12px !important; }
-  .settings-text { display: none; }
-
-  /* --- Модальные окна --- */
-  .modal-card { padding: 1rem; width: 95%; }
-
-  /* --- Тесты --- */
-  #testGrid { grid-template-columns: 1fr !important; }
-  
-  .match-grid { gap: 8px !important; }
-  .match-item {
-    min-height: 4rem; height: 100%; padding: 8px 4px !important;
-    font-size: 14px !important; display: flex; align-items: center;
-    justify-content: center; text-align: center; word-break: break-word;
-  }
-
-  /* --- Настройки --- */
-  .settings-btn-group { flex-direction: column !important; }
-
-  /* --- Карточки --- */
-  #categoryList { grid-template-columns: 1fr !important; }
-
-  /* --- Своя игра --- */
-  .jeopardy-board-wrapper { overflow-x: auto; padding-bottom: 10px; }
-  .jeopardy-board-wrapper > div { min-width: 500px; }
-
-  /* --- ФЛЕШ-КАРТОЧКИ (Жесткая фиксация на экране) --- */
-/* Блокировка прокрутки body, когда открыта игра с карточками */
-body.flashcards-active {
-  overflow: hidden !important;
-}
-
-/* --- СТИЛИ ДЛЯ ПК (По умолчанию) --- */
 .flashcards-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 100px);
   position: relative;
   overflow: hidden;
 }
 
+.fc-top-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 15px; z-index: 30; flex-shrink: 0;
+}
+.fc-back-btn { background: transparent; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; color: var(--text-main); }
+.fc-counter { font-weight: bold; font-size: 16px; color: var(--text-main); }
+
 .flashcards-play-area {
   display: flex;
-  flex-direction: row; /* Жестко в строку */
+  flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 5vw;
   flex: 1;
-  max-width: 900px;
-  margin: 0 auto;
   width: 100%;
   position: relative;
 }
@@ -651,92 +148,97 @@ body.flashcards-active {
   z-index: 10;
 }
 
-#deckLeft, #deckRight {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-}
+#deckLeft, #deckRight { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
 
 .deck-pile {
-  width: 7.5rem;
-  height: 11rem;
+  width: 7.5rem; height: 11rem;
   background: var(--bg-card);
   border: 2px dashed var(--border-color);
   border-radius: 1rem;
   display: flex; align-items: center; justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+}
+.deck-label { text-align: center; margin-top: 15px; color: var(--text-muted); font-size: 14px; }
+.gold-label { color: var(--gold); }
+
+.fc-controls {
+  position: absolute; bottom: 20px; left: 0; right: 0;
+  display: flex; justify-content: center; z-index: 30;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
 }
 
-.deck-label {
-  text-align: center;
-  margin-top: 15px;
-  color: var(--text-muted);
-  font-size: 14px;
+.flashcard-inner { box-shadow: var(--shadow-md); border-radius: 1.25rem; }
+.flashcard-face {
+  position: absolute; width: 100%; height: 100%;
+  backface-visibility: hidden; border-radius: 1.25rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
+.flashcard-front { background: var(--card-front-bg); border: 2px solid var(--gold); color: var(--text-main); }
+.flashcard-back { background: var(--card-back-bg); border: 2px solid #3a86ff; color: var(--text-main); transform: rotateY(180deg); }
 
-.gold-label {
-  color: var(--gold);
-}
+.hanzi-display { font-family: 'Noto Sans SC', sans-serif; font-size: 4rem; font-weight: 500; letter-spacing: 0.1rem; text-align: center; }
+.fc-hint { position: absolute; bottom: 15px; color: var(--text-muted); font-size: 12px; font-style: italic; text-align: center; width: 100%; }
+.fc-pinyin { font-size: 24px; color: #3a86ff; margin-bottom: 10px; font-weight: bold; }
+.fc-translation { font-size: 32px; font-weight: bold; text-align: center; padding: 0 20px; }
 
-/* --- МОБИЛЬНАЯ ВЕРСИЯ --- */
+/* =========================================================
+   МОБИЛЬНАЯ ВЕРСИЯ (до 768px)
+   ========================================================= */
 @media (max-width: 768px) {
+  /* Общие */
+  #app { padding: 10px; }
+  .app-header { flex-direction: column; padding: 10px; gap: 10px; }
+  .app-header nav { justify-content: center; width: 100%; }
+  .app-header .logo { margin-right: 0; font-size: 1.25rem; }
+  
+  /* Флеш-карточки */
   .flashcards-wrapper {
-    position: fixed;
-    top: 140px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 90;
-    padding: 10px;
-    height: auto;
-  }
-
-  .flashcards-play-area {
-    flex: 1;
-    overflow: hidden;
-  }
-
-  #activeZone {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 75vw;
-    height: 50vh;
-    max-width: 280px;
-    max-height: 400px;
-    pointer-events: none;
-  }
-
-  .flashcard-inner { 
-    pointer-events: auto;
-    width: 100% !important; 
-    height: 100% !important; 
-  }
-
-  #deckLeft, #deckRight {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 5;
-  }
-
-  #deckLeft { left: 0; margin-left: -5px; }
-  #deckRight { right: 0; margin-right: -5px; }
-
-  #deckLeft .deck-pile, #deckRight .deck-pile {
-    width: 4.5rem !important;
-    height: 6.5rem !important;
+    position: fixed; top: 140px; bottom: 0; left: 0; right: 0;
+    z-index: 90; padding: 10px; height: auto;
   }
   
-  .deck-label {
-    font-size: 11px;
-    margin-top: 8px;
+  .flashcards-play-area { flex: 1; overflow: hidden; }
+  
+  #activeZone {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75vw; height: 50vh;
+    max-width: 280px; max-height: 400px;
+    pointer-events: none;
   }
-
-  #feedbackToggleBtn {
-    bottom: 80px !important;
-  }
+  
+  .flashcard-inner { pointer-events: auto; width: 100% !important; height: 100% !important; }
+  
+  #deckLeft, #deckRight { position: absolute; top: 50%; transform: translateY(-50%); z-index: 5; }
+  #deckLeft { left: 0; margin-left: -5px; }
+  #deckRight { right: 0; margin-right: -5px; }
+  
+  #deckLeft .deck-pile, #deckRight .deck-pile { width: 4.5rem !important; height: 6.5rem !important; }
+  .deck-label { font-size: 11px; margin-top: 8px; }
+  
+  .fc-controls { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 30; }
+  
+  #feedbackToggleBtn { bottom: 80px !important; }
+  
+  /* Главная и Тесты */
+  .menu-card { padding: 1.5rem; }
+  #testGrid { grid-template-columns: 1fr !important; }
+  .match-grid { gap: 8px !important; }
+  .match-item { min-height: 4rem; height: 100%; padding: 8px 4px !important; font-size: 14px !important; }
+  
+  /* Настройки и Карточки */
+  .settings-btn-group { flex-direction: column !important; }
+  #categoryList { grid-template-columns: 1fr !important; }
+  
+  /* Своя игра */
+  .jeopardy-board-wrapper { overflow-x: auto; padding-bottom: 10px; }
+  .jeopardy-board-wrapper > div { min-width: 500px; }
 }
+
+/* Виджет обратной связи */
+#feedbackWidget { position: fixed; bottom: 20px; right: 20px; z-index: 1000; }
+#feedbackToggleBtn { width: 50px; height: 50px; border-radius: 50%; background: var(--primary-btn); color: var(--primary-btn-text); font-size: 24px; border: 1px solid var(--primary-btn-border); box-shadow: var(--shadow-md); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+#feedbackModal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1001; }
+.feedback-card { background: #1e122b; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); position: relative; z-index: 1002; }
+[data-theme="light"] .feedback-card { background: #ffffff; }
+#feedbackModal.hidden { display: none; }

@@ -27,12 +27,17 @@ function playSwish() {
 }
 
 export function init(container) {
+  document.body.classList.remove('flashcards-active');
   renderSetup(container);
-  return () => {};
+  return () => {
+    document.body.classList.remove('flashcards-active');
+  };
 }
 
 // === ЭКРАН НАСТРОЙКИ ===
 function renderSetup(container) {
+  document.body.classList.remove('flashcards-active');
+  
   let html = `
     <div style="min-height: 80vh; padding: 20px; animation: fadeIn 0.4s ease-out;">
       <div class="card" style="max-width: 600px; margin: 40px auto;">
@@ -40,14 +45,14 @@ function renderSetup(container) {
         <p class="subtitle" style="text-align: center; margin-bottom: 24px;">Выберите категории или включите блиц</p>
         
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-          <label style="display: flex; align-items: center; gap: 10px; font-size: 16px; cursor: pointer; background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px;">
+          <label style="display: flex; align-items: center; gap: 10px; font-size: 16px; cursor: pointer; background: var(--bg-card); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);">
             <input type="checkbox" id="blitzMode" style="width: 20px; height: 20px; accent-color: var(--gold);">
             <b>Блиц-режим (случайные 20 слов)</b>
           </label>
           
           <div id="categoryList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
             ${Object.entries(CATEGORIES).map(([key, name]) => `
-              <label class="cat-label" style="display: flex; align-items: center; gap: 8px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 8px; cursor: pointer; opacity: 1; transition: 0.2s;">
+              <label class="cat-label" style="display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg-card); border-radius: 8px; cursor: pointer; opacity: 1; transition: 0.2s; border: 1px solid var(--border-color);">
                 <input type="checkbox" class="cat-checkbox" value="${key}" checked style="width: 18px; height: 18px; accent-color: var(--gold);">
                 ${name}
               </label>
@@ -104,19 +109,19 @@ function startGame(container, words) {
   currentWord = null;
   isFlipped = false;
 
+  // МАКЕТ БЕЗ ИНЛАЙН-СТИЛЕЙ ДЛЯ КОНТЕЙНЕРОВ
   container.innerHTML = `
     <div class="flashcards-wrapper">
       
-      <!-- Верхняя панель (Настройки и Счетчик) -->
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; z-index: 30; flex-shrink: 0;">
-        <button id="backToSetup" style="background: transparent; border: 1px solid var(--border-color); padding: 6px 12px; border-radius: 8px; cursor: pointer; color: var(--text-main);">← Настройки</button>
-        <div style="font-weight: bold; font-size: 16px; color: var(--text-main);">Осталось: <span id="cardsLeft" style="color: var(--gold);">${mainDeck.length}</span></div>
+      <!-- Верхняя панель -->
+      <div class="fc-top-bar">
+        <button id="backToSetup" class="fc-back-btn">← Настройки</button>
+        <div class="fc-counter">Осталось: <span id="cardsLeft" style="color: var(--gold);">${mainDeck.length}</span></div>
       </div>
 
-      <!-- Игровое поле (все инлайн-стили убраны!) -->
+      <!-- Игровое поле -->
       <div class="flashcards-play-area">
         
-        <!-- Левая колода -->
         <div id="deckLeft" class="card-deck">
           <div class="deck-pile" id="deckLeftPile">
             <div class="card-back" style="font-size: 40px; color: var(--text-muted);">?</div>
@@ -124,10 +129,8 @@ function startGame(container, words) {
           <div class="deck-label">Новые</div>
         </div>
 
-        <!-- Центральная зона -->
         <div id="activeZone"></div>
 
-        <!-- Правая колода -->
         <div id="deckRight" class="card-deck">
           <div class="deck-pile" id="deckRightPile" style="border-color: var(--gold);">
             <div class="card-back" style="font-size: 40px; color: var(--gold);">✓</div>
@@ -136,14 +139,17 @@ function startGame(container, words) {
         </div>
       </div>
 
-      <!-- Кнопка Перевернуть (внизу) -->
-      <div id="controls" style="position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 30;">
+      <!-- Кнопка Перевернуть -->
+      <div class="fc-controls" id="controls">
         <button id="flipBtn" class="primary" style="max-width: 200px;">Перевернуть</button>
       </div>
     </div>
   `;
 
-  document.getElementById('backToSetup').addEventListener('click', () => renderSetup(container));
+  document.getElementById('backToSetup').addEventListener('click', () => {
+    document.body.classList.remove('flashcards-active');
+    renderSetup(container);
+  });
 
   const deckLeft = document.getElementById('deckLeft');
   const deckRight = document.getElementById('deckRight');
@@ -152,7 +158,6 @@ function startGame(container, words) {
   const controls = document.getElementById('controls');
   const cardsLeftEl = document.getElementById('cardsLeft');
 
-  // Клик по левой колоде (вытянуть новую)
   deckLeft.addEventListener('click', () => {
     if (currentWord) return; 
     if (mainDeck.length === 0) return;
@@ -163,16 +168,14 @@ function startGame(container, words) {
     updateDeckVisuals(deckLeft, mainDeck.length);
     
     playSwish();
-    renderCard(activeZone, currentWord, 'left'); // Анимация слева
+    renderCard(activeZone, currentWord, 'left');
     controls.style.opacity = '1';
     controls.style.pointerEvents = 'auto';
   });
 
-  // Клик по правой колоде (вернуть карту)
   deckRight.addEventListener('click', () => {
     if (doneDeck.length === 0) return;
     
-    // Если есть активная карта, сначала прячем её в левую колоду
     if (currentWord) {
       mainDeck.push(currentWord);
       currentWord = null;
@@ -188,12 +191,11 @@ function startGame(container, words) {
     updateDeckVisuals(deckRight, doneDeck.length);
     
     playSwish();
-    renderCard(activeZone, currentWord, 'right'); // Анимация справа
+    renderCard(activeZone, currentWord, 'right');
     controls.style.opacity = '1';
     controls.style.pointerEvents = 'auto';
   });
 
-  // Переворот карты
   flipBtn.addEventListener('click', () => {
     if (!currentWord) return;
     isFlipped = !isFlipped;
@@ -205,7 +207,6 @@ function startGame(container, words) {
   });
 
   function renderCard(zone, word, origin) {
-    document.body.classList.remove('flashcards-active');
     const startX = origin === 'left' ? '-150px' : '150px';
     
     zone.innerHTML = `
@@ -216,25 +217,20 @@ function startGame(container, words) {
         transform: translateX(${startX}) scale(0.6) rotateY(0deg);
         opacity: 0;
       ">
-        <!-- Лицевая сторона -->
-        <div class="flashcard-face flashcard-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div class="flashcard-face flashcard-front">
           <div class="hanzi-display">${word.hanzi}</div>
-          <div style="position: absolute; bottom: 15px; color: var(--text-muted); font-size: 12px; font-style: italic; text-align: center; width: 100%;">
-            Нажмите на карту, чтобы скрыть
-          </div>
+          <div class="fc-hint">Нажмите на карту, чтобы скрыть</div>
         </div>
 
-        <!-- Обратная сторона -->
-        <div class="flashcard-face flashcard-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <div style="font-size: 24px; color: #3a86ff; margin-bottom: 10px; font-weight: bold;">${word.pinyin}</div>
-          <div style="font-size: 32px; font-weight: bold; text-align: center; padding: 0 20px;">${word.translation}</div>
+        <div class="flashcard-face flashcard-back">
+          <div class="fc-pinyin">${word.pinyin}</div>
+          <div class="fc-translation">${word.translation}</div>
         </div>
       </div>
     `;
 
     const inner = zone.querySelector('.flashcard-inner');
     
-    // Плавный вылет в центр
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         inner.style.transform = 'translateX(0) scale(1) rotateY(0deg)';
@@ -242,12 +238,10 @@ function startGame(container, words) {
       });
     });
 
-    // --- ЛОГИКА КЛИКОВ ---
     inner.style.cursor = 'pointer';
     inner.addEventListener('click', (e) => {
-      if (!currentWord) return;
+      if (e.defaultPrevented) return;
       
-      // Улетает вправо
       inner.style.transform = 'translateX(200px) rotate(20deg) scale(0.5)';
       inner.style.opacity = '0';
       playSwish();
@@ -271,21 +265,21 @@ function startGame(container, words) {
     const pile = deckEl.querySelector('.deck-pile');
     if (count > 0) {
       pile.style.transform = 'scale(1)';
-      pile.style.boxShadow = `0 0 20px rgba(76,201,160,0.3), ${Math.min(count, 5) * -2}px ${Math.min(count, 5) * -2}px 0px rgba(255,255,255,0.1)`;
+      pile.style.boxShadow = `0 0 20px var(--gold-glow), ${Math.min(count, 5) * -2}px ${Math.min(count, 5) * -2}px 0px rgba(255,255,255,0.1)`;
       pile.style.borderStyle = 'solid';
-      pile.style.borderColor = 'rgba(255,255,255,0.3)';
+      pile.style.borderColor = 'var(--border-color)';
     } else {
       pile.style.transform = 'scale(0.9)';
       pile.style.boxShadow = 'none';
       pile.style.borderStyle = 'dashed';
-      pile.style.borderColor = 'rgba(255,255,255,0.2)';
+      pile.style.borderColor = 'var(--border-color)';
     }
   }
 }
 
-// === ЭКРАН ЗАВЕРШЕНИЯ ===
 function showVictoryScreen(container) {
   document.body.classList.remove('flashcards-active');
+  
   container.innerHTML = `
     <div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.5s ease-out;">
       <div class="card" style="max-width: 500px; width: 100%; text-align: center; padding: 40px 20px;">
@@ -305,14 +299,11 @@ function showVictoryScreen(container) {
     </div>
   `;
 
-  // Возврат к выбору категорий
   document.getElementById('finishSetupBtn').addEventListener('click', () => {
     renderSetup(container);
   });
 
-  // Повторить те же слова
   document.getElementById('restartDeckBtn').addEventListener('click', () => {
-    // Берем все слова, которые мы только что изучили
     const wordsToRepeat = [...doneDeck]; 
     startGame(container, wordsToRepeat);
   });
