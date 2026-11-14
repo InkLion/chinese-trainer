@@ -40,59 +40,55 @@ function homeView(container) {
   const greeting = getGreeting();
 
   container.innerHTML = `
-    <div style="min-height: 80vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.5s ease-out;">
+    <div style="min-height: 80vh; display: flex; flex-direction: column; padding: 20px; animation: fadeIn 0.5s ease-out;">
       
-      <!-- Мини-профиль в углу -->
-      <div class="home-profile-box" style="position: absolute; top: 20px; right: 20px; display: flex; align-items: center; gap: 10px; background: var(--bg-panel); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-        <span style="color: var(--gold); font-weight: bold;">👤 ${user}</span>
-        <a href="#/settings" class="profile-btn" title="Настройки" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 5px;">
-          ⚙️ <span class="settings-text">Настройки</span>
-        </a>
-        <button id="logoutBtnHome" class="profile-btn" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main);">Выйти</button>
+      <!-- Верхняя панель с профилем (всегда наверху, ничего не перекрывает) -->
+      <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 20px;">
+        <div class="home-profile-box" style="display: flex; align-items: center; gap: 10px; background: var(--bg-panel); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+          <span style="color: var(--gold); font-weight: bold;">👤 ${user}</span>
+          
+          <a href="#/settings" class="profile-btn" title="Настройки" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 5px;">
+            ⚙️ <span class="settings-text">Настройки</span>
+          </a>
+          
+          <button id="logoutBtnHome" class="profile-btn" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main);">Выйти</button>
+        </div>
       </div>
 
-      <!-- Заголовок -->
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="font-size: 72px; font-weight: 900; color: var(--gold); margin: 0; text-shadow: 0 0 40px var(--gold-glow); letter-spacing: 6px;">汉语</h1>
-        <div style="font-size: 20px; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 8px;">Тренажёр</div>
-      </div>
-
-      <!-- Приветствие -->
-      <h2 style="font-size: 28px; margin-bottom: 50px; font-weight: 400; text-align: center; color: var(--text-main);">
-        ${greeting}, <span style="color: var(--gold); font-weight: 800;">${user}</span>!
-      </h2>
-
-      <!-- Карточки навигации -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; max-width: 800px;">
+      <!-- Центральная часть с логотипом и карточками -->
+      <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 50px;">
         
-        <!-- Тесты -->
-        <a href="#/tests" class="menu-card">
-          <div>📝</div>
-          <div>Тесты</div>
-          <div>Проверка слов, чисел, времени и грамматики</div>
-        </a>
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="font-size: 72px; font-weight: 900; color: var(--gold); margin: 0; text-shadow: 0 0 40px var(--gold-glow); letter-spacing: 6px;">汉语</h1>
+          <div style="font-size: 20px; color: var(--text-muted); letter-spacing: 4px; text-transform: uppercase; margin-top: 8px;">Тренажёр</div>
+        </div>
 
-        <!-- Своя игра -->
-        <a href="#/jeopardy" class="menu-card">
-          <div>🎯</div>
-          <div>Своя игра</div>
-          <div>Викторина для игры в компании</div>
-        </a>
+        <h2 style="font-size: 28px; margin-bottom: 50px; font-weight: 400; text-align: center; color: var(--text-main);">
+          ${greeting}, <span style="color: var(--gold); font-weight: 800;">${user}</span>!
+        </h2>
 
-        <!-- Карточки -->
-        <a href="#/flashcards" class="menu-card">
-          <div>🃏</div>
-          <div>Карточки</div>
-          <div>Запоминание слов с помощью флеш-карточек</div>
-        </a>
-
-        <!-- Заглушка (Прописи) -->
-        <a href="#" class="menu-card" style="opacity: 0.5; cursor: not-allowed;" onclick="event.preventDefault(); alert('Этот раздел находится в разработке! 🚧');">
-          <div style="filter: grayscale(1);">✍️</div>
-          <div>WIP</div>
-          <div></div>
-        </a>
-
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; max-width: 800px;">
+          <a href="#/tests" class="menu-card">
+            <div>📝</div>
+            <div>Тесты</div>
+            <div>Проверка слов, чисел, времени и грамматики</div>
+          </a>
+          <a href="#/jeopardy" class="menu-card">
+            <div>🎯</div>
+            <div>Своя игра</div>
+            <div>Викторина для игры в компании</div>
+          </a>
+          <a href="#/flashcards" class="menu-card">
+            <div>🃏</div>
+            <div>Карточки</div>
+            <div>Запоминание слов с помощью флеш-карточек</div>
+          </a>
+          <a href="#" class="menu-card" style="opacity: 0.5; cursor: not-allowed;" onclick="event.preventDefault(); alert('Этот раздел находится в разработке! 🚧');">
+            <div style="filter: grayscale(1);">✍️</div>
+            <div>Прописи</div>
+            <div>Рукописный ввод иероглифов</div>
+          </a>
+        </div>
       </div>
     </div>
   `;
