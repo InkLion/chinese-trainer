@@ -257,3 +257,82 @@ body.flashcards-active { overflow: hidden !important; }
 .feedback-card { background: #1e122b; border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: var(--shadow-lg); position: relative; z-index: 1002; }
 [data-theme="light"] .feedback-card { background: #ffffff; }
 #feedbackModal.hidden { display: none; }
+
+/* =========================================================
+   МОДАЛЬНЫЕ ОКНА (Для Тестов и Своей игры)
+   ========================================================= */
+
+/* Затемненный фон на весь экран */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(8, 4, 14, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+/* Сама карточка с вопросом */
+.modal-card {
+  width: 100%;
+  max-width: 38rem;
+  background: #1e122b; /* Плотный темный фон */
+  border: 1px solid var(--gold-glow);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Светлая тема для карточки */
+[data-theme="light"] .modal-card {
+  background: #ffffff;
+}
+
+/* Текст вопроса */
+.q-text { 
+  font-size: 1.4rem; 
+  line-height: 1.5; 
+  margin-bottom: 1.5rem; 
+  font-weight: 600; 
+  color: var(--text-main);
+}
+.q-text b { color: var(--gold); }
+
+/* Варианты ответов (кнопки внутри модалки) */
+.q-options { 
+  display: grid; 
+  gap: 0.75rem; 
+}
+
+.opt { 
+  text-align: left; 
+  padding: 1rem 1.25rem; 
+  font-size: 1.1rem; 
+  background: var(--bg-hover); 
+  border: 1px solid var(--border-color); 
+  border-radius: 0.5rem; 
+  cursor: pointer; 
+  color: var(--text-main);
+  transition: all 0.2s;
+}
+
+.opt:hover { 
+  background: var(--border-color); 
+}
+
+.opt.correct { 
+  background: rgba(76, 201, 160, 0.2); 
+  border-color: var(--success); 
+  color: var(--success); 
+}
+
+.opt.wrong { 
+  background: rgba(230, 57, 70, 0.2); 
+  border-color: var(--danger); 
+  color: var(--danger); 
+}
