@@ -72,20 +72,19 @@ export function init(container) {
 
     try {
       if (view === 'register') {
-        // 1. Регистрация в Auth (передаем ник в метаданные)
+        // 1. Регистрация в Auth
         const { data, error } = await supabase.auth.signUp({ 
           email: technicalEmail, 
-          password: password,
-          options: {
-            data: {
-              username: rawUsername // <-- Передаем ник для триггера
-            }
-          }
+          password: password 
         });
         if (error) throw error;
 
-        // ВАЖНО: Мы больше не делаем insert вручную! 
-        // База данных сама создаст профиль через триггер.
+        // 2. Создание профиля (используем тот же ник)
+        const { error: profileErr } = await supabase
+          .from('profiles')
+          .insert({ id: data.user.id, username: rawUsername });
+        
+        if (profileErr) throw profileErr;
 
         setCurrentUser(rawUsername);
         window.location.hash = '#/';

@@ -15,23 +15,17 @@ export function init(container) {
       <div class="card" style="max-width: 500px; margin: 0 auto;">
         
         <!-- Выбор темы -->
-        <div style="margin-bottom: 30px;">
-          <h3 style="margin-top: 0; color: #fff;">Тема оформления</h3>
-          <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <div class="settings-btn-group" style="display: flex; gap: 10px; margin-top: 10px;">
             <button id="theme-dark" class="opt ${currentTheme === 'dark' ? 'correct' : ''}" style="flex: 1; justify-content: center; text-align: center;">Тёмная</button>
             <button id="theme-light" class="opt ${currentTheme === 'light' ? 'correct' : ''}" style="flex: 1; justify-content: center; text-align: center;">Светлая</button>
           </div>
-        </div>
 
         <!-- Выбор размера шрифта -->
-        <div>
-          <h3 style="margin-top: 0; color: #fff;">Размер шрифта</h3>
-          <div style="display: flex; gap: 10px; margin-top: 10px;">
+          <div class="settings-btn-group" style="display: flex; gap: 10px; margin-top: 10px;">
             <button id="font-small" class="opt ${currentFontSize === '14' ? 'correct' : ''}" style="flex: 1; justify-content: center; text-align: center; font-size: 14px;">Мелкий</button>
             <button id="font-normal" class="opt ${currentFontSize === '16' ? 'correct' : ''}" style="flex: 1; justify-content: center; text-align: center; font-size: 16px;">Обычный</button>
             <button id="font-large" class="opt ${currentFontSize === '18' ? 'correct' : ''}" style="flex: 1; justify-content: center; text-align: center; font-size: 18px;">Крупный</button>
           </div>
-        </div>
 
       </div>
     </div>

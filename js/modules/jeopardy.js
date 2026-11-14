@@ -150,9 +150,13 @@ containerRef.innerHTML = `
           </div>
         </div>
         
-        ${headerHtml}
-        <div id="jeopardyGrid" style="display: grid; grid-template-columns: repeat(${COLS}, 1fr); gap: 10px;">
-          ${cellsHtml}
+        <div class="jeopardy-board-wrapper">
+          <div>
+            ${headerHtml}
+            <div id="jeopardyGrid" style="display: grid; grid-template-columns: repeat(${COLS}, 1fr); gap: 10px;">
+              ${cellsHtml}
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -34,7 +34,7 @@ async function renderTestList(container) {
         <p style="font-size: 16px; color: var(--text-muted); margin-top: 10px;">Выберите тему для проверки знаний</p>
       </div>
 
-      <div id="testGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
+      <div id="testGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto;">
         ${Array(6).fill(`
           <div class="test-card" style="opacity: 0.5; pointer-events: none;">
             <div style="width: 60%; height: 24px; background: var(--bg-hover); border-radius: 4px; margin-bottom: 12px;"></div>
@@ -86,12 +86,8 @@ async function renderTestList(container) {
       let lastResultHtml = '';
       if (stats.length > 0) {
         const last = stats[0];
-        
-        // ПРОВЕРЯЕМ, СОВПАДАЕТ ЛИ КОЛИЧЕСТВО ПРАВИЛЬНЫХ С ОБЩИМ
-        const isPerfect = last.correct === last.total; 
-        
-        lastResultHtml = `<div style="font-size: 13px; color: ${isPerfect ? 'var(--success)' : 'var(--danger)'}; margin-top: 8px; background: var(--bg-card); padding: 4px 8px; border-radius: 6px; display: inline-block;">
-          Последний раз: ${isPerfect ? 'Без ошибок' : 'С ошибками'}
+        lastResultHtml = `<div style="font-size: 13px; color: ${last.correct ? 'var(--success)' : 'var(--danger)'}; margin-top: 8px; background: var(--bg-card); padding: 4px 8px; border-radius: 6px; display: inline-block;">
+          Последний раз: ${last.correct ? 'Без ошибок' : 'С ошибками'}
         </div>`;
       }
 

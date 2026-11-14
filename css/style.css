@@ -90,6 +90,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   transition: background 0.3s ease, color 0.3s ease;
+  overscroll-behavior-x: none; /* Запрещает нативный свайп "назад" по краям экрана */
 }
 
 h1 { font-size: 2.5rem; color: var(--gold); letter-spacing: 1px; }
@@ -559,4 +560,137 @@ select option {
 [data-theme="light"] select option {
   background-color: #ffffff;
   color: #2c1533;
+}
+
+/* =========================================================
+   ТЕЛЕФОНЫ (до 480px)
+   ========================================================= */
+@media (max-width: 480px) {
+  /* --- Общие стили --- */
+  h1 { font-size: 2rem; }
+  body { overscroll-behavior-x: none; }
+
+  /* --- Шапка сайта --- */
+  .app-header {
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+  }
+  .app-header nav { justify-content: center; width: 100%; }
+  .app-header .logo { margin-right: 0; font-size: 1.25rem; }
+
+  /* --- Профиль на главной --- */
+  .home-profile-box {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    margin-bottom: 20px;
+    justify-content: center;
+    padding: 5px 8px !important;
+    gap: 5px !important;
+  }
+  .profile-btn { padding: 4px 8px !important; font-size: 12px !important; }
+  .settings-text { display: none; }
+
+  /* --- Модальные окна --- */
+  .modal-card { padding: 1rem; width: 95%; }
+
+  /* --- Тесты --- */
+  #testGrid { grid-template-columns: 1fr !important; }
+  
+  .match-grid { gap: 8px !important; }
+  .match-item {
+    min-height: 4rem; height: 100%; padding: 8px 4px !important;
+    font-size: 14px !important; display: flex; align-items: center;
+    justify-content: center; text-align: center; word-break: break-word;
+  }
+
+  /* --- Настройки --- */
+  .settings-btn-group { flex-direction: column !important; }
+
+  /* --- Карточки --- */
+  #categoryList { grid-template-columns: 1fr !important; }
+
+  /* --- Своя игра --- */
+  .jeopardy-board-wrapper { overflow-x: auto; padding-bottom: 10px; }
+  .jeopardy-board-wrapper > div { min-width: 500px; }
+
+  /* --- ФЛЕШ-КАРТОЧКИ (Жесткая фиксация на экране) --- */
+/* Блокировка прокрутки body, когда открыта игра с карточками */
+body.flashcards-active {
+  overflow: hidden !important;
+}
+
+/* Обертка игры (фиксируем под шапкой) */
+.flashcards-wrapper {
+  position: fixed;
+  top: 140px; /* Высота шапки на мобилке */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: transparent; /* Пусть фон body просвечивает */
+  z-index: 90;
+  padding: 10px;
+}
+
+/* На ПК шапка ниже, поправим отступ (вне медиа-запроса) */
+@media (min-width: 481px) {
+  .flashcards-wrapper {
+    top: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* ... остальные стили для мобилок ... */
+
+  .flashcards-play-area {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  #activeZone {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 75vw;
+    height: 50vh;
+    max-width: 280px;
+    max-height: 400px;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .flashcard-inner { 
+    pointer-events: auto;
+    width: 100% !important; 
+    height: 100% !important; 
+  }
+
+  #deckLeft, #deckRight {
+    display: flex !important;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 5;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  /* Прижимаем к самым краям */
+  #deckLeft { left: 0; margin-left: -5px; }
+  #deckRight { right: 0; margin-right: -5px; }
+
+  #deckLeft .deck-pile, #deckRight .deck-pile {
+    width: 4.5rem !important;
+    height: 6.5rem !important;
+  }
+
+  /* Сдвигаем кнопку жука чуть выше, чтобы она не перекрывала "Изучено" */
+  #feedbackToggleBtn {
+    bottom: 80px !important; 
+  }
 }
