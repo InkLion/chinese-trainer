@@ -97,7 +97,6 @@ function renderSetup(container) {
 
 // === ИГРА ===
 function startGame(container, words) {
-  // Блокируем прокрутку страницы, пока идет игра
   document.body.classList.add('flashcards-active');
 
   mainDeck = [...words].sort(() => Math.random() - 0.5);
@@ -106,8 +105,7 @@ function startGame(container, words) {
   isFlipped = false;
 
   container.innerHTML = `
-    <!-- Убрали background и height, теперь это сделает CSS -->
-    <div class="flashcards-wrapper" style="display: flex; flex-direction: column; overflow: hidden; animation: fadeIn 0.4s ease-out;">
+    <div class="flashcards-wrapper">
       
       <!-- Верхняя панель (Настройки и Счетчик) -->
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; z-index: 30; flex-shrink: 0;">
@@ -115,7 +113,7 @@ function startGame(container, words) {
         <div style="font-weight: bold; font-size: 16px; color: var(--text-main);">Осталось: <span id="cardsLeft" style="color: var(--gold);">${mainDeck.length}</span></div>
       </div>
 
-      <!-- Игровое поле -->
+      <!-- Игровое поле (все инлайн-стили убраны!) -->
       <div class="flashcards-play-area">
         
         <!-- Левая колода -->
@@ -123,24 +121,23 @@ function startGame(container, words) {
           <div class="deck-pile" id="deckLeftPile">
             <div class="card-back" style="font-size: 40px; color: var(--text-muted);">?</div>
           </div>
-          <div style="text-align: center; margin-top: 8px; color: var(--text-muted); font-size: 12px;">Новые</div>
+          <div class="deck-label">Новые</div>
         </div>
 
         <!-- Центральная зона -->
         <div id="activeZone"></div>
 
-        <!-- Правая колода (Сделали акцентной) -->
+        <!-- Правая колода -->
         <div id="deckRight" class="card-deck">
           <div class="deck-pile" id="deckRightPile" style="border-color: var(--gold);">
             <div class="card-back" style="font-size: 40px; color: var(--gold);">✓</div>
           </div>
-          <div style="text-align: center; margin-top: 8px; color: var(--gold); font-size: 12px;">Изучено</div>
+          <div class="deck-label gold-label">Изучено</div>
         </div>
       </div>
 
       <!-- Кнопка Перевернуть (внизу) -->
       <div id="controls" style="position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center; z-index: 30;">
-        <!-- Убрали зеленый цвет, теперь она наследует цвет .primary (золото/фиолет) -->
         <button id="flipBtn" class="primary" style="max-width: 200px;">Перевернуть</button>
       </div>
     </div>

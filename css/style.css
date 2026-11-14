@@ -621,32 +621,80 @@ body.flashcards-active {
   overflow: hidden !important;
 }
 
-/* Обертка игры (фиксируем под шапкой) */
+/* --- СТИЛИ ДЛЯ ПК (По умолчанию) --- */
 .flashcards-wrapper {
-  position: fixed;
-  top: 140px; /* Высота шапки на мобилке */
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: transparent; /* Пусть фон body просвечивает */
-  z-index: 90;
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 120px);
+  position: relative;
+  overflow: hidden;
 }
 
-/* На ПК шапка ниже, поправим отступ (вне медиа-запроса) */
-@media (min-width: 481px) {
+.flashcards-play-area {
+  display: flex;
+  flex-direction: row; /* Жестко в строку */
+  justify-content: center;
+  align-items: center;
+  gap: 5vw;
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+}
+
+#activeZone {
+  width: 240px;
+  height: 340px;
+  position: relative;
+  perspective: 1000px;
+  z-index: 10;
+}
+
+#deckLeft, #deckRight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.deck-pile {
+  width: 7.5rem;
+  height: 11rem;
+  background: var(--bg-card);
+  border: 2px dashed var(--border-color);
+  border-radius: 1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+}
+
+.deck-label {
+  text-align: center;
+  margin-top: 15px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.gold-label {
+  color: var(--gold);
+}
+
+/* --- МОБИЛЬНАЯ ВЕРСИЯ --- */
+@media (max-width: 768px) {
   .flashcards-wrapper {
-    top: 80px;
+    position: fixed;
+    top: 140px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    padding: 10px;
+    height: auto;
   }
-}
-
-@media (max-width: 480px) {
-  /* ... остальные стили для мобилок ... */
 
   .flashcards-play-area {
-    position: relative;
     flex: 1;
-    width: 100%;
     overflow: hidden;
   }
 
@@ -659,7 +707,6 @@ body.flashcards-active {
     height: 50vh;
     max-width: 280px;
     max-height: 400px;
-    z-index: 10;
     pointer-events: none;
   }
 
@@ -670,17 +717,12 @@ body.flashcards-active {
   }
 
   #deckLeft, #deckRight {
-    display: flex !important;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
-    flex-direction: column;
-    align-items: center;
-    cursor: pointer;
   }
 
-  /* Прижимаем к самым краям */
   #deckLeft { left: 0; margin-left: -5px; }
   #deckRight { right: 0; margin-right: -5px; }
 
@@ -688,9 +730,13 @@ body.flashcards-active {
     width: 4.5rem !important;
     height: 6.5rem !important;
   }
+  
+  .deck-label {
+    font-size: 11px;
+    margin-top: 8px;
+  }
 
-  /* Сдвигаем кнопку жука чуть выше, чтобы она не перекрывала "Изучено" */
   #feedbackToggleBtn {
-    bottom: 80px !important; 
+    bottom: 80px !important;
   }
 }
