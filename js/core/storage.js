@@ -55,40 +55,64 @@ export async function getStats(testName) {
 }
 
 export async function addMistake(testName, prompt) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      console.error("Ошибка: Пользователь не авторизован для сохранения ошибки.");
+      return;
+    }
 
-  // 1. Сначала проверяем, есть ли уже такая ошибка у пользователя
-  const { data: existing } = await supabase
-    .from('user_progress')
-    .select('id')
-    .eq('user_id', user.id)
-    .eq('test_name', testName)
-    .eq('question_id', prompt)
-    .eq('is_correct', false)
-    .limit(1);
+    // Проверяем, нет ли уже такой ошибки
+    const { data: existing, error: selectErr } = await supabase
+      .from('user_progress')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('test_name', testName)
+      .eq('question_id', prompt)
+      .eq('is_correct', false)
+      .limit(1);
 
-  // 2. Если ошибки нет, только тогда добавляем
-  if (!existing || existing.length === 0) {
-    await supabase.from('user_progress').insert({
-      user_id: user.id,
-      test_name: testName,
-      question_id: prompt,
-      is_correct: false
-    });
+    if (selectErr) {
+      console.error("Ошибка при проверке существующих ошибок:", selectErr);
+      return;
+    }
+
+    // Если ошибки нет, добавляем
+    if (!existing || existing.length === 0) {
+      const { error: insertErr } = await supabase.from('user_progress').insert({
+        user_id: user.id,
+        test_name: testName,
+        question_id: prompt,
+        is_correct: false
+      });
+
+      if (insertErr) {
+        console.error("ОШИБКА БАЗЫ ДАННЫХ при добавлении ошибки:", insertErr);
+      } else {
+        console.log("✅ Ошибка успешно сохранена в базу:", prompt);
+      }
+    }
+  } catch (e) {
+    console.error("Критическая ошибка в addMistake:", e);
   }
 }
 
 export async function removeMistake(testName, prompt) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
-  await supabase
-    .from('user_progress')
-    .delete()
-    .eq('user_id', user.id)
-    .eq('test_name', testName)
-    .eq('question_id', prompt);
+    const { error } = await supabase
+      .from('user_progress')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('test_name', testName)
+      .eq('question_id', prompt);
+
+    if (error) console.error("ОШИБКА БАЗЫ ДАННЫХ при удалении ошибки:", error);
+  } catch (e) {
+    console.error("Критическая ошибка в removeMistake:", e);
+  }
 }
 
 export async function getMistakes(testName) {

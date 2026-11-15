@@ -294,9 +294,9 @@ function showQuestion(container) {
       const displayAnswer = validAnswers[0].join(' ');
 
       if (ok) {
-        finishQuestion(true, nextBtn, displayAnswer, rawQ.prompt);
+        await finishQuestion(true, nextBtn, q.answer.join(''), rawQ.prompt);
       } else {
-        finishQuestion(false, nextBtn, displayAnswer, rawQ.prompt);
+        await finishQuestion(false, nextBtn, q.answer.join(' '), rawQ.prompt);
       }
     }
 
@@ -393,9 +393,9 @@ function showQuestion(container) {
           
           if (matched === total) {
             if (mistakes === 0) {
-              finishQuestion(true, nextBtn, '', rawQ.prompt);
+              await finishQuestion(true, nextBtn, '', rawQ.prompt);
             } else {
-              finishQuestion(false, nextBtn, `Все пары собраны, но допущено ошибок: ${mistakes}`, rawQ.prompt);
+              await finishQuestion(false, nextBtn, `Все пары собраны, но допущено ошибок: ${mistakes}`, rawQ.prompt);
             }
           }
         } else {
