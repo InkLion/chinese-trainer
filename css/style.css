@@ -336,3 +336,69 @@ body.flashcards-active { overflow: hidden !important; }
   border-color: var(--danger); 
   color: var(--danger); 
 }
+
+/* =========================================================
+   СБОРКА ПРЕДЛОЖЕНИЙ (Тип order)
+   ========================================================= */
+
+/* Верхний блок, куда мы собираем предложение */
+.order-answer {
+  min-height: 4.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1rem;
+  border: 2px dashed var(--border-color);
+  border-radius: 1rem;
+  margin-bottom: 1.5rem; /* Отделяем от пула слов */
+  background: var(--bg-card);
+  transition: border-color 0.3s;
+}
+
+/* Подсветка рамки, если в блоке уже есть слова */
+.order-answer:has(.word-chip) {
+  border-style: solid;
+  border-color: var(--gold);
+}
+
+/* Подсказка внутри пустого поля */
+.order-hint {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-style: italic;
+  width: 100%;
+  text-align: center;
+}
+
+/* Нижний блок с доступными словами */
+.order-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0.5rem;
+}
+
+/* Стили для самих кликабельных слов */
+.word-chip {
+  padding: 0.5rem 1rem;
+  font-size: 1.1rem;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.word-chip:hover {
+  background: var(--gold-glow);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.word-chip:active {
+  transform: translateY(0);
+}

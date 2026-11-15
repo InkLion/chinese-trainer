@@ -307,7 +307,10 @@ function showQuestion(container) {
       let allOk = true;
       inputs.forEach((inp, idx) => {
         const correct = q.fill_answers[idx];
-        if (normalizeAnswer(inp.value) !== normalizeAnswer(correct)) {
+        // Разбиваем правильные ответы по слэшу для каждого пропуска
+        const validAnswers = String(correct).split('/').map(a => normalizeAnswer(a.trim()));
+        
+        if (!validAnswers.includes(normalizeAnswer(inp.value))) {
           allOk = false;
           inp.style.borderColor = 'var(--danger)';
         } else {
@@ -392,7 +395,11 @@ function showQuestion(container) {
 }
 
 async function checkAnswer(btn, userAns, correctAns, nextBtn, rawPrompt) {
-  const isCorrect = normalizeAnswer(userAns) === normalizeAnswer(correctAns);
+  // Разбиваем правильный ответ по слэшу (если там несколько вариантов)
+  const validAnswers = String(correctAns).split('/').map(a => normalizeAnswer(a.trim()));
+  
+  // Проверяем, совпадает ли ввод хотя бы с одним из вариантов
+  const isCorrect = validAnswers.includes(normalizeAnswer(userAns));
   
   if (btn) {
     btn.disabled = true;
@@ -401,7 +408,9 @@ async function checkAnswer(btn, userAns, correctAns, nextBtn, rawPrompt) {
       else {
         btn.classList.add('wrong');
         const allBtns = Array.from(btn.parentElement.querySelectorAll('.opt'));
-        const correctBtn = allBtns.find(b => b.textContent === correctAns);
+        // Для подсветки правильной кнопки берем первый вариант
+        const correctText = String(correctAns).split('/')[0].trim();
+        const correctBtn = allBtns.find(b => b.textContent === correctText);
         if (correctBtn) correctBtn.classList.add('correct');
       }
     }
