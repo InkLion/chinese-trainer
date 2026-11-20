@@ -1,17 +1,61 @@
 // js/data/words.js
 
 export const CATEGORIES = {
-  greetings: 'Приветствия',
+  greetings: 'Знакомство',
   pronouns: 'Местоимения',
   family: 'Семья',
   time: 'Время',
   date: 'Дата',
   daily: 'Обычная жизнь',
-  colors: 'Цвета'
+  colors: 'Цвета',
+  numbers: 'Цифры'
 };
 
 export const WORDS = [
-  // Приветствия
+  // Цифры
+  { hanzi: "一", pinyin: "yī", translation: "Один", category: "numbers" },
+  { hanzi: "二", pinyin: "èr", translation: "Два", category: "numbers" },
+  { hanzi: "三", pinyin: "sān", translation: "Три", category: "numbers" },
+  { hanzi: "四", pinyin: "sì", translation: "Четыре", category: "numbers" },
+  { hanzi: "五", pinyin: "wǔ", translation: "Пять", category: "numbers" },
+  { hanzi: "六", pinyin: "liù", translation: "Шесть", category: "numbers" },
+  { hanzi: "七", pinyin: "qī", translation: "Семь", category: "numbers" },
+  { hanzi: "八", pinyin: "bā", translation: "Восемь", category: "numbers" },
+  { hanzi: "九", pinyin: "jiǔ", translation: "Девять", category: "numbers" },
+  { hanzi: "零", pinyin: "líng", translation: "Ноль", category: "numbers" },
+  { hanzi: "十", pinyin: "shí", translation: "Десять", category: "numbers" },
+  { hanzi: "百", pinyin: "bǎi", translation: "Сто", category: "numbers" },
+  { hanzi: "千", pinyin: "qiān", translation: "Тысяча", category: "numbers" },
+
+  // Время
+  { hanzi: "时间", pinyin: "shí jiān", translation: "Время", category: "time" },
+  { hanzi: "点", pinyin: "diǎn", translation: "Час", category: "time" },
+  { hanzi: "两", pinyin: "liǎng", translation: "Пара", category: "time" },
+  { hanzi: "分", pinyin: "fēn", translation: "Минута", category: "time" },
+  { hanzi: "半", pinyin: "bàn", translation: "Половина", category: "time" },
+  { hanzi: "刻", pinyin: "kè", translation: "Четверть", category: "time" },
+  { hanzi: "现在", pinyin: "xiàn zài", translation: "Сейчас", category: "time" },
+  { hanzi: "早上", pinyin: "zǎo shang", translation: "Утро", category: "time" },
+  { hanzi: "上午", pinyin: "shang wǔ", translation: "До обеда", category: "time" },
+  { hanzi: "中午", pinyin: "zhōng wǔ", translation: "Обед", category: "time" },
+  { hanzi: "下午", pinyin: "xià wǔ", translation: "Днем", category: "time" },
+  { hanzi: "晚上", pinyin: "wǎn shang", translation: "Вечер", category: "time" },
+  { hanzi: "夜里", pinyin: "yè lǐ", translation: "Ночь", category: "time" },
+  { hanzi: "差", pinyin: "chà", translation: "Без", category: "time" },
+
+  // Дата
+  { hanzi: "日期", pinyin: "rì qī", translation: "Дата", category: "date" },
+  { hanzi: "年", pinyin: "nián", translation: "Год", category: "date" },
+  { hanzi: "月", pinyin: "yuè", translation: "Месяц", category: "date" },
+  { hanzi: "日", pinyin: "rì", translation: "День (солнце)", category: "date" },
+  { hanzi: "号", pinyin: "hào", translation: "Число", category: "date" },
+  { hanzi: "天", pinyin: "tiān", translation: "День", category: "date" },
+  { hanzi: "今天", pinyin: "jīn tiān", translation: "Сегодня", category: "date" },
+  { hanzi: "昨天", pinyin: "zuó tiān", translation: "Вчера", category: "date" },
+  { hanzi: "明天", pinyin: "míng tiān", translation: "Завтра", category: "date" },
+  { hanzi: "星期", pinyin: "xīng qī", translation: "Неделя", category: "date" },
+
+  // Знакомство
   { hanzi: "你好", pinyin: "nǐ hǎo", translation: "Привет", category: "greetings" },
   { hanzi: "您好", pinyin: "nín hǎo", translation: "Здравствуйте", category: "greetings" },
   { hanzi: "大家好", pinyin: "dà jiā hǎo", translation: "Всем привет", category: "greetings" },
@@ -22,6 +66,43 @@ export const WORDS = [
   { hanzi: "不用谢", pinyin: "bù yòng xiè", translation: "Пожалуйста", category: "greetings" },
   { hanzi: "朋友", pinyin: "péng you", translation: "Друг", category: "greetings" },
   { hanzi: "很高兴认识你", pinyin: "hěn gāo xìng rèn shi nǐ", translation: "Приятно познакомиться", category: "greetings" },
+  { hanzi: "很", pinyin: "hěn", translation: "Очень", category: "greetings" },
+  { hanzi: "高兴", pinyin: "gāo xīng", translation: "Приятный, радостный", category: "greetings" },
+  { hanzi: "认识", pinyin: "rèn shí", translation: "Познакомиться, знать", category: "greetings" },
+  { hanzi: "生日", pinyin: "shēng rì", translation: "День рождения", category: "greetings" },
+  { hanzi: "叫", pinyin: "jiào", translation: "Называться (имя)", category: "greetings" },
+  { hanzi: "你叫什么名字？", pinyin: "nǐ jiào shén me míng zì?", translation: "Как тебя зовут?", category: "greetings" },
+  { hanzi: "姓", pinyin: "xìng", translation: "Фамилия", category: "greetings" },
+  { hanzi: "你姓什么？", pinyin: "nǐ xìng shén me?", translation: "Как твоя фамилия?", category: "greetings" },
+  { hanzi: "你多大了？", pinyin: "nǐ duō dà le?", translation: "Сколько тебе лет?", category: "greetings" },
+  { hanzi: "你几岁？", pinyin: "nǐ jǐ suì?", translation: "Сколько тебе лет?", category: "greetings" },
+
+
+    // Обычная жизнь
+  { hanzi: "日常生活", pinyin: "rì cháng shēng huó", translation: "Обычная жизнь", category: "daily" },
+  { hanzi: "起床", pinyin: "qǐ chuáng", translation: "Вставать", category: "daily" },
+  { hanzi: "睡觉", pinyin: "shuì jiào", translation: "Спать", category: "daily" },
+  { hanzi: "吃", pinyin: "chī", translation: "Есть", category: "daily" },
+  { hanzi: "饭", pinyin: "fàn", translation: "Еда", category: "daily" },
+  { hanzi: "吃早饭", pinyin: "chī zǎo fàn", translation: "Завтракать", category: "daily" },
+  { hanzi: "吃午饭", pinyin: "chī wǔ fàn", translation: "Обедать", category: "daily" },
+  { hanzi: "吃晚饭", pinyin: "chī wǎn fàn", translation: "Ужинать", category: "daily" },
+  { hanzi: "做作业", pinyin: "zuò zuò yè", translation: "Делать задание", category: "daily" },
+  { hanzi: "看电视", pinyin: "kàn diàn shì", translation: "Смотреть ТВ", category: "daily" },
+  { hanzi: "学校", pinyin: "xué xiào", translation: "Школа", category: "daily" },
+  { hanzi: "学习", pinyin: "xué xí", translation: "Учить", category: "daily" },
+  { hanzi: "去", pinyin: "qù", translation: "Идти", category: "daily" },
+  { hanzi: "上学", pinyin: "shàng xué", translation: "Идти в школу", category: "daily" },
+  { hanzi: "上班", pinyin: "shàng bān", translation: "Идти на работу", category: "daily" },
+  { hanzi: "回家", pinyin: "huí jiā", translation: "Возвращаться домой", category: "daily" },
+  { hanzi: "中文", pinyin: "zhōn wén", translation: "Китайский язык", category: "daily" },
+  { hanzi: "汉语", pinyin: "hàn yǔ", translation: "Китайский язык", category: "daily" },
+  { hanzi: "在", pinyin: "zài", translation: "Находиться (в)", category: "daily" },
+  { hanzi: "猫", pinyin: "māo", translation: "Кот", category: "daily" },
+  { hanzi: "狗", pinyin: "gǒu", translation: "Собака", category: "daily" },
+  { hanzi: "花", pinyin: "huā", translation: "Цветок", category: "daily" },
+  { hanzi: "杯子", pinyin: "bēi zi", translation: "Кружка", category: "daily" },
+  { hanzi: "本子", pinyin: "běn zi", translation: "Тетрадь", category: "daily" },
 
   // Местоимения
   { hanzi: "我", pinyin: "wǒ", translation: "Я", category: "pronouns" },
@@ -40,46 +121,6 @@ export const WORDS = [
   { hanzi: "姐姐", pinyin: "jiě jie", translation: "Старшая сестра", category: "family" },
   { hanzi: "妹妹", pinyin: "mèi mei", translation: "Младшая сестра", category: "family" },
   { hanzi: "宝贝", pinyin: "bǎo bèi", translation: "Ребёнок", category: "family" },
-
-  // Время
-  { hanzi: "时间", pinyin: "shí jiān", translation: "Время", category: "time" },
-  { hanzi: "点", pinyin: "diǎn", translation: "Час", category: "time" },
-  { hanzi: "分", pinyin: "fēn", translation: "Минута", category: "time" },
-  { hanzi: "半", pinyin: "bàn", translation: "Половина", category: "time" },
-  { hanzi: "刻", pinyin: "kè", translation: "Четверть", category: "time" },
-  { hanzi: "现在", pinyin: "xiàn zài", translation: "Сейчас", category: "time" },
-  { hanzi: "早上", pinyin: "zǎo shang", translation: "Утро", category: "time" },
-  { hanzi: "中午", pinyin: "zhōng wǔ", translation: "Обед", category: "time" },
-  { hanzi: "下午", pinyin: "xià wǔ", translation: "Днем", category: "time" },
-  { hanzi: "晚上", pinyin: "wǎn shang", translation: "Вечер", category: "time" },
-
-  // Дата
-  { hanzi: "日期", pinyin: "rì qī", translation: "Дата", category: "date" },
-  { hanzi: "年", pinyin: "nián", translation: "Год", category: "date" },
-  { hanzi: "月", pinyin: "yuè", translation: "Месяц", category: "date" },
-  { hanzi: "日", pinyin: "rì", translation: "День (солнце)", category: "date" },
-  { hanzi: "号", pinyin: "hào", translation: "Число", category: "date" },
-  { hanzi: "今天", pinyin: "jīn tiān", translation: "Сегодня", category: "date" },
-  { hanzi: "昨天", pinyin: "zuó tiān", translation: "Вчера", category: "date" },
-  { hanzi: "明天", pinyin: "míng tiān", translation: "Завтра", category: "date" },
-  { hanzi: "星期", pinyin: "xīng qī", translation: "Неделя", category: "date" },
-
-  // Обычная жизнь
-  { hanzi: "起床", pinyin: "qǐ chuáng", translation: "Вставать", category: "daily" },
-  { hanzi: "睡觉", pinyin: "shuì jiào", translation: "Спать", category: "daily" },
-  { hanzi: "吃", pinyin: "chī", translation: "Есть", category: "daily" },
-  { hanzi: "饭", pinyin: "fàn", translation: "Еда", category: "daily" },
-  { hanzi: "吃早饭", pinyin: "chī zǎo fàn", translation: "Завтракать", category: "daily" },
-  { hanzi: "做作业", pinyin: "zuò zuò yè", translation: "Делать задание", category: "daily" },
-  { hanzi: "看电视", pinyin: "kàn diàn shì", translation: "Смотреть ТВ", category: "daily" },
-  { hanzi: "学校", pinyin: "xué xiào", translation: "Школа", category: "daily" },
-  { hanzi: "去", pinyin: "qù", translation: "Идти", category: "daily" },
-  { hanzi: "在", pinyin: "zài", translation: "Находиться (в)", category: "daily" },
-  { hanzi: "猫", pinyin: "māo", translation: "Кот", category: "daily" },
-  { hanzi: "狗", pinyin: "gǒu", translation: "Собака", category: "daily" },
-  { hanzi: "花", pinyin: "huā", translation: "Цветок", category: "daily" },
-  { hanzi: "杯子", pinyin: "bēi zi", translation: "Кружка", category: "daily" },
-  { hanzi: "本子", pinyin: "běn zi", translation: "Тетрадь", category: "daily" },
 
   // Цвета
   { hanzi: "色", pinyin: "sè", translation: "Цвет", category: "colors" },
