@@ -65,7 +65,6 @@ export const WORDS = [
   { hanzi: "谢谢", pinyin: "xiè xie", translation: "Спасибо", category: "greetings" },
   { hanzi: "不用谢", pinyin: "bù yòng xiè", translation: "Пожалуйста", category: "greetings" },
   { hanzi: "朋友", pinyin: "péng you", translation: "Друг", category: "greetings" },
-  { hanzi: "很高兴认识你", pinyin: "hěn gāo xìng rèn shi nǐ", translation: "Приятно познакомиться", category: "greetings" },
   { hanzi: "很", pinyin: "hěn", translation: "Очень", category: "greetings" },
   { hanzi: "高兴", pinyin: "gāo xīng", translation: "Приятный, радостный", category: "greetings" },
   { hanzi: "认识", pinyin: "rèn shí", translation: "Познакомиться, знать", category: "greetings" },
@@ -76,6 +75,7 @@ export const WORDS = [
   { hanzi: "你姓什么？", pinyin: "nǐ xìng shén me?", translation: "Как твоя фамилия?", category: "greetings" },
   { hanzi: "你多大了？", pinyin: "nǐ duō dà le?", translation: "Сколько тебе лет?", category: "greetings" },
   { hanzi: "你几岁？", pinyin: "nǐ jǐ suì?", translation: "Сколько тебе лет?", category: "greetings" },
+  { hanzi: "你好吗？", pinyin: "nǐ hǎo ma?", translation: "Как вы поживаете?", category: "greetings" },
 
 
     // Обычная жизнь
@@ -87,6 +87,10 @@ export const WORDS = [
   { hanzi: "吃早饭", pinyin: "chī zǎo fàn", translation: "Завтракать", category: "daily" },
   { hanzi: "吃午饭", pinyin: "chī wǔ fàn", translation: "Обедать", category: "daily" },
   { hanzi: "吃晚饭", pinyin: "chī wǎn fàn", translation: "Ужинать", category: "daily" },
+  { hanzi: "做饭", pinyin: "zuò fàn", translation: "Готовить еду", category: "daily" },
+  { hanzi: "做早饭", pinyin: "zuò zǎo fàn", translation: "Готовить завтрак", category: "daily" },
+  { hanzi: "做午饭", pinyin: "zuò wǔ fàn", translation: "Готовить обед", category: "daily" },
+  { hanzi: "做晚饭", pinyin: "zuò wǎn fàn", translation: "Готовить ужин", category: "daily" },
   { hanzi: "做作业", pinyin: "zuò zuò yè", translation: "Делать задание", category: "daily" },
   { hanzi: "看电视", pinyin: "kàn diàn shì", translation: "Смотреть ТВ", category: "daily" },
   { hanzi: "学校", pinyin: "xué xiào", translation: "Школа", category: "daily" },
@@ -103,6 +107,10 @@ export const WORDS = [
   { hanzi: "花", pinyin: "huā", translation: "Цветок", category: "daily" },
   { hanzi: "杯子", pinyin: "bēi zi", translation: "Кружка", category: "daily" },
   { hanzi: "本子", pinyin: "běn zi", translation: "Тетрадь", category: "daily" },
+  { hanzi: "谢谢", pinyin: "xièxie", translation: "Спасибо", category: "daily" },
+  { hanzi: "不客气", pinyin: "bú kèqi", translation: "Пожалуйста, не стоит благодарности", category: "daily" },
+  { hanzi: "对不起", pinyin: "duìbuqǐ", translation: "Извините", category: "daily" },
+  { hanzi: "没关系", pinyin: "méiguānxi", translation: "Ничего страшного", category: "daily" },
 
   // Местоимения
   { hanzi: "我", pinyin: "wǒ", translation: "Я", category: "pronouns" },

@@ -22,6 +22,7 @@ const routes = {
   'jeopardy': jeopardyInit,
   'flashcards': flashcardsInit,
   'settings': settingsInit,
+  'dialogues':  dialoguesInit,
 };
 
 let currentCleanup = null;
@@ -83,10 +84,10 @@ function homeView(container) {
             <div>Карточки</div>
             <div>Запоминание слов с помощью флеш-карточек</div>
           </a>
-          <a href="#" class="menu-card" style="opacity: 0.5; cursor: not-allowed;" onclick="event.preventDefault(); alert('Этот раздел находится в разработке! 🚧');">
-            <div style="filter: grayscale(1);">✍️</div>
-            <div>Прописи</div>
-            <div>Рукописный ввод иероглифов</div>
+          <a href="#/dialogues" class="menu-card">
+            <div>💬</div>
+            <div>Диалоги</div>
+            <div>Тренировка реальных фраз в формате чата</div>
           </a>
         </div>
       </div>
