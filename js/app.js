@@ -5,6 +5,7 @@ import { getCurrentUser, logout } from './core/storage.js';
 import { init as flashcardsInit } from './modules/flashcards.js';
 import { init as settingsInit } from './modules/settings.js';
 import { initFeedbackWidget } from './core/feedback.js';
+import { init as dialoguesInit } from './modules/dialogues.js';
 
 const savedTheme = localStorage.getItem('theme') || 'dark';
 const savedFontSize = localStorage.getItem('fontSize') || '16';
