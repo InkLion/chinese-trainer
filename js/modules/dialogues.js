@@ -1,5 +1,6 @@
 // js/modules/dialogues.js
 import { DIALOGUES } from '../data/dialogues.js';
+import { getCurrentUser } from '../core/storage.js';
 
 export function init(container) {
   renderList(container);
@@ -31,6 +32,12 @@ function renderList(container) {
 function startDialogue(container, dialogueIndex) {
   const dialogue = DIALOGUES[dialogueIndex];
   let currentStep = 0;
+  
+  // Получаем имя пользователя (или "Иван", если имя не задано)
+  const userName = getCurrentUser() || 'Иван';
+  
+  // Функция для подстановки имени в текст
+  const formatText = (text) => text.replace(/\{\{username\}\}/g, userName);
 
   container.innerHTML = `
     <div class="chat-container">
@@ -53,8 +60,7 @@ function startDialogue(container, dialogueIndex) {
   const messagesArea = document.getElementById('chatMessages');
   const optionsArea = document.getElementById('chatOptions');
 
-  function showBotMessage(text, hintText) {
-    // Показываем анимацию печати
+  function showBotMessage(text) {
     const typingDiv = document.createElement('div');
     typingDiv.className = 'chat-bubble bot typing';
     typingDiv.innerHTML = '<span></span><span></span><span></span>';
@@ -65,15 +71,13 @@ function startDialogue(container, dialogueIndex) {
       typingDiv.remove();
       const msgDiv = document.createElement('div');
       msgDiv.className = 'chat-bubble bot';
-      msgDiv.innerHTML = `
-        <div style="font-size: 20px; font-weight: bold; margin-bottom: 4px;">${text}</div>
-        <div style="font-size: 12px; color: var(--text-muted);">${hintText}</div>
-      `;
+      // Убрали перевод, оставили только китайский текст
+      msgDiv.innerHTML = `<div style="font-size: 20px; font-weight: bold;">${formatText(text)}</div>`;
       messagesArea.appendChild(msgDiv);
       scrollToBottom();
       
       showOptions();
-    }, 800); // Задержка для эффекта "печатает..."
+    }, 800);
   }
 
   function showOptions() {
@@ -81,29 +85,29 @@ function startDialogue(container, dialogueIndex) {
     if (!step) return;
 
     optionsArea.innerHTML = '';
-    // Перемешиваем варианты
+    
+    // Перемешиваем и сразу подставляем имя в варианты ответов
     const shuffled = [...step.options].sort(() => Math.random() - 0.5);
     
     shuffled.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'chat-option-btn';
-      btn.textContent = opt;
+      btn.textContent = formatText(opt);
       btn.onclick = () => handleAnswer(opt, step.correct);
       optionsArea.appendChild(btn);
     });
   }
 
   function handleAnswer(chosen, correct) {
-    // Блокируем кнопки после ответа
     optionsArea.innerHTML = ''; 
 
+    // Сравниваем оригинальные строки (с плейсхолдерами)
     const isCorrect = chosen === correct;
     
-    // Добавляем сообщение пользователя
     const userMsg = document.createElement('div');
     userMsg.className = 'chat-bubble user';
     if (!isCorrect) userMsg.classList.add('wrong');
-    userMsg.textContent = chosen;
+    userMsg.textContent = formatText(chosen);
     messagesArea.appendChild(userMsg);
     scrollToBottom();
 
@@ -114,19 +118,17 @@ function startDialogue(container, dialogueIndex) {
       } else {
         setTimeout(() => {
           const nextStep = dialogue.steps[currentStep];
-          showBotMessage(nextStep.bot, nextStep.hint);
+          showBotMessage(nextStep.bot); // Передаем только текст
         }, 1000);
       }
     } else {
-      // Если ошибка, показываем правильный ответ через паузу
       setTimeout(() => {
         const errorMsg = document.createElement('div');
         errorMsg.style.cssText = 'text-align: center; color: var(--danger); font-size: 14px; margin: 10px 0;';
-        errorMsg.textContent = `Правильный ответ: ${correct}`;
+        errorMsg.textContent = `Правильный ответ: ${formatText(correct)}`;
         messagesArea.appendChild(errorMsg);
         scrollToBottom();
 
-        // Даем еще одну попытку
         setTimeout(() => showOptions(), 1500);
       }, 500);
     }
@@ -147,5 +149,5 @@ function startDialogue(container, dialogueIndex) {
   }
 
   // Запускаем первый шаг
-  showBotMessage(dialogue.steps[0].bot, dialogue.steps[0].hint);
+  showBotMessage(dialogue.steps[0].bot);
 }
