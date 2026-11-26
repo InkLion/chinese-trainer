@@ -162,25 +162,39 @@ function buildTestCard(container, test, index, info) {
   return card;
 }
 
-function startQuiz(container, index, review, mistakes) {
-  const test = allTests[index];
-  if (!test) return;
+function startQuiz(container, testIndex, reviewMode = false) {
+  const test = allTests[testIndex];
+  currentTestName = test.name;
+  isReviewMode = reviewMode;
+  currentIndex = 0;
+  correctCount = 0;
 
-  const pool = visibleQuestions(test);
-  if (!pool.length) {
-    alert('В этом тесте нет заданий, доступных на телефоне. Откройте его на компьютере.');
+  const isMobile = window.innerWidth <= 768;
+  
+  // ВОТ ЗДЕСЬ МЫ БЕРЕМ ВСЕ ВОПРОСЫ ИЗ ТЕСТА
+  let baseQuestions = test.questions;
+
+  if (isMobile) {
+    baseQuestions = baseQuestions.filter(q => q.qtype === 'choice' || q.qtype === 'match' || q.qtype === 'order');
+  }
+
+  if (baseQuestions.length === 0) {
+    alert('Этот тест состоит только из заданий на ввод текста. Пожалуйста, используйте компьютер.');
     return;
   }
 
-  let questions;
-  if (review) {
-    const mistaken = new Set(mistakes || []);
-    questions = pool.filter((q) => mistaken.has(q.prompt));
-    if (!questions.length) {
-      alert('По этому тесту нет ошибок для повторения.');
-      renderTestList(container);
-      return;
-    }
+  if (reviewMode) {
+    getMistakes(test.name).then(mistakes => {
+      // Теперь baseQuestions доступна
+      currentQuestions = baseQuestions.filter(q => mistakes.includes(q.prompt));
+      
+      if (currentQuestions.length === 0) {
+        alert('Нет подходящих ошибок для повторения.');
+        renderTestList(container);
+        return;
+      }
+      showQuestion(container);
+    });
   } else {
     // 1. Разделяем вопросы на обязательные и обычные
     const mandatoryQuestions = baseQuestions.filter(q => q.mandatory);
@@ -193,33 +207,18 @@ function startQuiz(container, index, review, mistakes) {
     let selectedQuestions = [...mandatoryQuestions];
     
     if (test.limit && test.limit > 0) {
-      // Сколько необязательных вопросов нужно добавить до лимита?
       const needed = test.limit - mandatoryQuestions.length;
-      
       if (needed > 0) {
-        // Добавляем нужное количество из перемешанных
         selectedQuestions = selectedQuestions.concat(shuffledOptional.slice(0, needed));
       }
-      // Если needed <= 0, значит обязательных вопросов уже больше лимита, оставляем только их
     } else {
-      // Если лимита нет, берем все вопросы (обязательные + все необязательные)
       selectedQuestions = selectedQuestions.concat(shuffledOptional);
     }
     
-    // 4. Финальное перемешивание, чтобы обязательные вопросы не всегда были в начале
+    // 4. Финальное перемешивание
     currentQuestions = selectedQuestions.sort(() => Math.random() - 0.5);
     showQuestion(container);
   }
-
-  session = {
-    container,
-    testName: test.name,
-    questions,
-    index: 0,
-    correct: 0,
-    review: Boolean(review)
-  };
-  showQuestion();
 }
 
 function showQuestion() {
