@@ -23,10 +23,16 @@ function fillPromptText(q) {
   return filtered.join('\n').trim().replace(/\{\}/g, '____');
 }
 
+/** Сравнение свободного ответа с учётом альтернатив через «/». */
 function matchesAnswer(userAnswer, correct) {
   const variants = Array.isArray(correct) ? correct : String(correct ?? '').split('/');
   const normalizedUser = normalizeAnswer(userAnswer);
+  
   if (!normalizedUser) return false;
+  
+  // Строгая проверка: ответ должен совпадать с одним из вариантов.
+  // Если в вопросе ответ задан иероглифами (через @cn), а пользователь ввел цифры,
+  // то normalizeAnswer вернет "11" для ввода и "十一" для ответа, и они не совпадут.
   return variants.some((variant) => normalizeAnswer(variant) === normalizedUser);
 }
 
