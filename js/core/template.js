@@ -4,7 +4,6 @@
 const CN_DIGITS = "零一二三四五六七八九";
 
 // === 1. Конвертация чисел в китайские иероглифы ===
-
 function toCnUnder10000(n) {
   if (n === 0) return "零";
   if (n < 10) return CN_DIGITS[n];
@@ -57,7 +56,6 @@ export function toCnYear(year) {
 }
 
 // === 2. Время и Дата ===
-
 function hour12(h) {
   const h12 = h % 12;
   return h12 === 0 ? 12 : h12;
@@ -80,19 +78,17 @@ function formatTimeCn(hour, minute, mode = "24") {
     h = hour12(hour);
   }
 
-  const head = prefix + (h === 2 ? "两" : toCnNumber(h)) + "点";
-
-  if (minute === 0) return head;
-  if (minute === 15) return `${head}一刻/${head}十五分`;
-  if (minute === 30) return `${head}半/${head}三十分`;
-  if (minute === 45) return `${head}三刻/${head}四十五分`;
-
-  const mCn = toCnNumber(minute) + "分";
-  // Для минут < 10 допустимы оба варианта: с «零» и без.
-  // Слэш разделяет ПОЛНЫЕ альтернативы, иначе «/» отрезал бы ответ до «五分».
-  if (minute < 10) return `${head}零${mCn}/${head}${mCn}`;
-
-  return head + mCn;
+  let s = prefix + (h === 2 ? "两" : toCnNumber(h)) + "点";
+  if (minute === 0) {
+    // ничего не добавляем
+  } else if (minute === 30) {
+    s += "半";
+  } else if (minute < 10) {
+    s += "零" + toCnNumber(minute) + "分";
+  } else {
+    s += toCnNumber(minute) + "分";
+  }
+  return s;
 }
 
 function formatTimeBasic(hour, minute, mode = "24") {
@@ -106,7 +102,6 @@ function formatTimeBasic(hour, minute, mode = "24") {
 }
 
 // === 3. Генерация случайных значений ===
-
 function generateValue(type, params) {
   if (type === "int") {
     const m = (params || "").match(/([+-]?\d+)\s*\.\.\s*([+-]?\d+)/);
@@ -123,13 +118,9 @@ function generateValue(type, params) {
   if (type === "choice") {
     const opts = (params || "").split("|").map(s => s.trim()).filter(Boolean);
     if (opts.length === 0) return { ru: "", cn: "" };
-    
     const selected = opts[Math.floor(Math.random() * opts.length)];
     const parts = selected.split(":");
-    return { 
-      ru: parts[0], 
-      cn: parts[1] || parts[0] 
-    };
+    return { ru: parts[0], cn: parts[1] || parts[0] };
   }
   
   if (type === "date") {
@@ -154,21 +145,19 @@ function generateValue(type, params) {
     };
   }
 
+  // === НОВЫЙ БЛОК: МАТЕМАТИКА ===
   if (type === "math") {
-    // Параметры вида: "add:10..50" или "mul:2..9:2..9"
     const parts = (params || "").split(":");
     const op = parts[0] || "add"; 
     
     let min1 = 1, max1 = 100, min2 = 1, max2 = 100;
     
-    // Парсим диапазон для первого числа
     if (parts[1] && parts[1].includes("..")) {
       const r = parts[1].split("..");
       min1 = parseInt(r[0], 10);
       max1 = parseInt(r[1], 10);
-      min2 = min1; max2 = max1; // По умолчанию второе число из того же диапазона
+      min2 = min1; max2 = max1; 
     }
-    // Парсим диапазон для второго числа (если указан)
     if (parts[2] && parts[2].includes("..")) {
       const r = parts[2].split("..");
       min2 = parseInt(r[0], 10);
@@ -181,31 +170,30 @@ function generateValue(type, params) {
 
     if (op === "add") result = n + m;
     else if (op === "sub") {
-      if (m > n) { const temp = n; n = m; m = temp; } // Чтобы не было отрицательных чисел
+      if (m > n) { const temp = n; n = m; m = temp; }
       result = n - m;
     }
     else if (op === "mul") result = n * m;
     else if (op === "div") {
-      m = m || 1; // Защита от деления на ноль
-      result = Math.floor(n / m); // Округляем до целого
-      n = result * m; // Корректируем первое число, чтобы делилось ровно
+      m = m || 1; 
+      result = Math.floor(n / m); 
+      n = result * m; 
     }
 
     return { n, m, result, op };
   }
+
   return "";
 }
 
 // === 4. Форматирование сгенерированных значений ===
-
 function formatValue(value, type, fmt, params) {
   if (type === "int") {
     return fmt === "cn" ? toCnNumber(value) : String(value);
   }
   
   if (type === "choice") {
-    if (fmt === "cn") return value.cn;
-    return value.ru;
+    return fmt === "cn" ? value.cn : value.ru;
   }
   
   if (type === "date") {
@@ -213,31 +201,14 @@ function formatValue(value, type, fmt, params) {
       const y = toCnYear(value.year);
       const m = toCnNumber(value.month);
       const d = toCnNumber(value.day);
-      // Возвращаем оба варианта: с "日" и с "号"
-      return `${y}年${m}月${d}日/${y}年${m}月${d}号`;
+      return `${y}年${m}月${d}日/${y}年${m}月${d}号`; 
     }
     if (fmt) {
-      // Простая реализация strftime для JS
       return fmt
         .replace("%Y", value.year)
         .replace("%m", String(value.month).padStart(2, '0'))
         .replace("%d", String(value.day).padStart(2, '0'));
     }
-    if (type === "math") {
-    const signs = { add: "+", sub: "-", mul: "×", div: "÷" };
-    const sign = signs[value.op] || "+";
-    
-    // Если запросили сам пример (например, @q)
-    if (fmt === "q" || fmt === "eq") {
-      return `${value.n} ${sign} ${value.m}`;
-    }
-    // Если запросили ответ иероглифами (@cn)
-    if (fmt === "cn") {
-      return toCnNumber(value.result);
-    }
-    // По умолчанию (просто @m) возвращаем ответ цифрами
-    return String(value.result);
-  }
     return `${value.year}-${String(value.month).padStart(2, '0')}-${String(value.day).padStart(2, '0')}`;
   }
   
@@ -253,18 +224,38 @@ function formatValue(value, type, fmt, params) {
     }
     return formatTimeBasic(value.hour, value.minute, mode);
   }
+
+  // === НОВЫЙ БЛОК: МАТЕМАТИКА ===
+  if (type === "math") {
+    const signs = { add: "+", sub: "-", mul: "×", div: "÷" };
+    const sign = signs[value.op] || "+";
+    
+    if (fmt === "q" || fmt === "eq") {
+      return `${value.n} ${sign} ${value.m}`;
+    }
+    if (fmt === "cn_eq") {
+      const cnSigns = { add: "加", sub: "减", mul: "乘以", div: "除以" };
+      const cnSign = cnSigns[value.op] || "加";
+      return `${toCnNumber(value.n)} ${cnSign} ${toCnNumber(value.m)}`;
+    }
+    if (fmt === "cn") {
+      return toCnNumber(value.result);
+    }
+    return String(value.result);
+  }
+
   return String(value);
 }
 
 // === 5. Движок шаблонов ===
-
-// Регулярное выражение из logic.py
 const TEMPLATE_RE = /\{\{(\w+)(?::([^}:@]*)(?::([^}@]*))?)?(?:@([^}]+))?\}\}/g;
-const KNOWN_TYPES = new Set(["int", "choice", "date", "time"]);
+
+// ВАЖНО: Добавлено "math" в список известных типов
+const KNOWN_TYPES = new Set(["int", "choice", "date", "time", "math"]);
 
 class VarContext {
   constructor() {
-    this.vars = new Map(); // name -> { value, type, params }
+    this.vars = new Map();
   }
 
   define(name, type, params) {
@@ -309,20 +300,16 @@ function resolveText(text, ctx) {
   
   return text.replace(TEMPLATE_RE, (match, p1, p2, p3, p4) => {
     const { name, type, params, fmt } = parsePlaceholder(match, p1, p2, p3, p4);
-    if (type) {
-      ctx.define(name, type, params);
-    }
+    if (type) ctx.define(name, type, params);
     const val = ctx.formatVar(name, fmt);
-    return val !== null ? val : match; // Если не нашли переменную, оставляем как есть
+    return val !== null ? val : match;
   });
 }
 
-// === 6. Главная функция, которую мы будем вызывать ===
-
+// === 6. Главная функция ===
 export function resolveQuestion(q) {
   const ctx = new VarContext();
   
-  // 1. Собираем все переменные (безопасно для строк и массивов)
   const sources = [q.prompt, q.hint, q.fill_text];
   if (typeof q.answer === 'string') sources.push(q.answer);
   if (Array.isArray(q.answer)) sources.push(...q.answer);
@@ -332,23 +319,16 @@ export function resolveQuestion(q) {
   if (q.pairs) q.pairs.forEach(pair => sources.push(pair[0], pair[1]));
 
   for (const src of sources) {
-    if (!src || typeof src !== 'string') continue; // Пропускаем не-строки
+    if (!src || typeof src !== 'string') continue;
     const matches = [...src.matchAll(TEMPLATE_RE)];
     for (const match of matches) {
-      // ВАЖНО: match[0] — это вся подстрока, а группы идут с индекса 1.
-      // Раньше здесь передавалось на один аргумент меньше, из-за чего
-      // имя переменной подменялось её типом и пре-пасс не определял ничего.
-      const { name, type, params } = parsePlaceholder(
-        match[0], match[1], match[2], match[3], match[4]
-      );
+      const { name, type, params } = parsePlaceholder(match[1], match[2], match[3], match[4]);
       if (type) ctx.define(name, type, params);
     }
   }
 
-  // 2. Функция для разрешения текста (работает только со строками)
   const resolve = (text) => typeof text === 'string' ? resolveText(text, ctx) : text;
 
-  // 3. Возвращаем объект, сохраняя массивы как массивы
   return {
     ...q,
     prompt: resolve(q.prompt),
@@ -363,28 +343,10 @@ export function resolveQuestion(q) {
 }
 
 // === 7. Нормализация ответов ===
-
-// Для сравнения ответов: без учёта регистра, пробелов, тонов и диакритики пиньиня.
 export function normalizeAnswer(s) {
-  if (s === null || s === undefined) return "";
-  let str = String(s).trim();
-  if (!str) return "";
-
-  // Если есть иероглифы — сравниваем только их.
-  if (/[\u4e00-\u9fff]/.test(str)) {
-    return str.replace(/[^\u4e00-\u9fff]/g, "");
+  if (!s) return "";
+  if (/[\u4e00-\u9fff]/.test(s)) {
+    return s.replace(/[^\u4e00-\u9fff]/g, "");
   }
-
-  // NFD + удаление комбинируемых знаков: nǎr → nar, nǐ hǎo → ni hao, ё → е.
-  str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-  // Пиньинь: выбрасываем цифры-тоны (ni3hao3 → nihao) и всё, кроме латиницы.
-  if (/[a-z]/i.test(str)) {
-    return str.toLowerCase().replace(/[1-5]/g, "").replace(/[^a-z]/g, "");
-  }
-
-  // Числовые и смешанные ответы («5-9», «101», «тси / чи»):
-  // регистр не важен, пробелы игнорируются, цифры и дефисы сохраняются
-  // (иначе ответ «5-9» превратился бы в пустую строку).
-  return str.toLowerCase().replace(/\s+/g, "");
+  return s.toLowerCase().replace(/\s+/g, ""); 
 }

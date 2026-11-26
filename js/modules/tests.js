@@ -4,17 +4,9 @@ import { addStat, addMistake, removeMistake, getTestsOverview } from '../core/st
 import { shuffle, escapeHtml } from '../core/utils.js';
 
 const MOBILE_BREAKPOINT = 768;
-// На телефоне ввод и пропуски неудобны — оставляем только выбор/пары/сборку.
 const MOBILE_TYPES = new Set(['choice', 'match', 'order']);
 
 let allTests = [];
-
-/**
- * Текущая попытка. Раньше состояние лежало в пяти модульных переменных,
- * из-за чего после ухода со страницы «хвосты» старой попытки могли
- * дорисовываться в отсоединённый контейнер.
- * @type {null | {container: HTMLElement, testName: string, questions: any[], index: number, correct: number, review: boolean}}
- */
 let session = null;
 
 const isMobile = () => window.innerWidth <= MOBILE_BREAKPOINT;
@@ -24,11 +16,6 @@ function visibleQuestions(test) {
   return isMobile() ? questions.filter((q) => MOBILE_TYPES.has(q.qtype)) : questions;
 }
 
-/**
- * Для fill-вопроса prompt почти дословно повторяет fill_text.
- * Убираем дублирующую строку, чтобы текст не показывался дважды,
- * и подстраховываемся от оставшихся «{}» в формулировке.
- */
 function fillPromptText(q) {
   const fill = String(q.fill_text || '').trim();
   const lines = String(q.prompt || '').split('\n');
@@ -36,7 +23,6 @@ function fillPromptText(q) {
   return filtered.join('\n').trim().replace(/\{\}/g, '____');
 }
 
-/** Сравнение свободного ответа с учётом альтернатив через «/». */
 function matchesAnswer(userAnswer, correct) {
   const variants = Array.isArray(correct) ? correct : String(correct ?? '').split('/');
   const normalizedUser = normalizeAnswer(userAnswer);
@@ -44,7 +30,6 @@ function matchesAnswer(userAnswer, correct) {
   return variants.some((variant) => normalizeAnswer(variant) === normalizedUser);
 }
 
-/** Человекочитаемый вид правильного ответа для сообщения об ошибке. */
 function displayAnswer(correct) {
   if (Array.isArray(correct)) return correct.map(String).join(', ');
   return String(correct ?? '')
@@ -56,7 +41,6 @@ function displayAnswer(correct) {
 
 export async function init(container) {
   try {
-    // Cache-busting оставлен: tests.json правится вручную и должен подхватываться.
     const res = await fetch('tests.json?v=' + Date.now());
     if (!res.ok) throw new Error('Не удалось загрузить tests.json');
     const data = await res.json();
@@ -93,7 +77,6 @@ async function renderTestList(container) {
   const grid = container.querySelector('#testGrid');
   if (!grid) return;
 
-  // Один запрос на ошибки + по одному лёгкому запросу на последний результат.
   let overview = {};
   try {
     overview = await getTestsOverview(allTests.map((t) => t.name));
@@ -146,29 +129,28 @@ function buildTestCard(container, test, index, info) {
     </div>
   `;
 
+  // ВАЖНО: Передаем pool (уже отфильтрованный список) в startQuiz, чтобы избежать рассинхронизации при изменении размера окна
   card.querySelector('.test-click-area').addEventListener('click', () => {
-    // Передаем пустой массив ошибок, так как это обычный запуск
-    startQuiz(container, index, false, []);
+    startQuiz(container, index, false, [], pool);
   });
 
   const reviewBtn = card.querySelector('[data-review]');
   if (reviewBtn) {
     reviewBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      // Передаем найденные ошибки для повторения
-      startQuiz(container, index, true, mistakes);
+      startQuiz(container, index, true, mistakes, pool);
     });
   }
 
   return card;
 }
 
-// ДОБАВЛЕН 4-й АРГУМЕНТ mistakes
-async function startQuiz(container, testIndex, reviewMode = false, mistakes = []) {
+// Добавлен аргумент preFilteredPool
+async function startQuiz(container, testIndex, reviewMode = false, mistakes = [], preFilteredPool = null) {
   const test = allTests[testIndex];
   
-  // Используем вашу функцию visibleQuestions, чтобы отфильтровать вопросы для мобилок
-  let baseQuestions = visibleQuestions(test);
+  // Если передан готовый пул вопросов с карточки, используем его. Иначе фильтруем заново.
+  let baseQuestions = preFilteredPool || visibleQuestions(test);
 
   if (baseQuestions.length === 0) {
     alert('Этот тест состоит только из заданий на ввод текста. Пожалуйста, используйте компьютер.');
@@ -176,7 +158,6 @@ async function startQuiz(container, testIndex, reviewMode = false, mistakes = []
   }
 
   if (reviewMode) {
-    // ИСПОЛЬЗУЕМ ПЕРЕДАННЫЙ МАССИВ mistakes, а не вызываем несуществующую функцию
     let reviewQuestions = baseQuestions.filter(q => mistakes.includes(q.prompt));
     
     if (reviewQuestions.length === 0) {
@@ -185,7 +166,6 @@ async function startQuiz(container, testIndex, reviewMode = false, mistakes = []
       return;
     }
 
-    // Инициализируем ваш объект session
     session = {
       container,
       testName: test.name,
@@ -201,11 +181,9 @@ async function startQuiz(container, testIndex, reviewMode = false, mistakes = []
     const mandatoryQuestions = baseQuestions.filter(q => q.mandatory);
     const optionalQuestions = baseQuestions.filter(q => !q.mandatory);
     
-    // Перемешиваем только необязательные вопросы
     let shuffledOptional = shuffle(optionalQuestions);
     let selectedQuestions = [...mandatoryQuestions];
     
-    // Применяем лимит
     if (test.limit && test.limit > 0) {
       const needed = test.limit - mandatoryQuestions.length;
       if (needed > 0) {
@@ -215,11 +193,10 @@ async function startQuiz(container, testIndex, reviewMode = false, mistakes = []
       selectedQuestions = selectedQuestions.concat(shuffledOptional);
     }
     
-    // Инициализируем ваш объект session
     session = {
       container,
       testName: test.name,
-      questions: shuffle(selectedQuestions), // Финальное перемешивание всего списка
+      questions: shuffle(selectedQuestions),
       index: 0,
       correct: 0,
       review: false
@@ -592,7 +569,6 @@ function showQuestion() {
     return;
   }
 
-  // Неизвестный qtype: не оставляем пользователя с пустым экраном.
   answered = true;
   feedback.textContent = `Неизвестный тип вопроса: «${q.qtype || 'не указан'}».`;
   feedback.style.color = 'var(--danger)';
@@ -620,7 +596,6 @@ async function finishQuestion({ isCorrect, nextBtn, feedback, correctText = '', 
     if (isCorrect) await removeMistake(s.testName, rawPrompt);
     else await addMistake(s.testName, rawPrompt);
   } catch (e) {
-    // Сбой сети/RLS не должен ломать прохождение теста.
     console.error('[tests] не удалось обновить список ошибок', e);
   }
 }
