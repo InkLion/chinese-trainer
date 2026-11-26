@@ -93,8 +93,7 @@ async function renderTestList(container) {
   const grid = container.querySelector('#testGrid');
   if (!grid) return;
 
-  // Один запрос на ошибки + по одному лёгкому запросу на последний результат,
-  // вместо 4 HTTP-запросов на каждый тест, как было раньше.
+  // Один запрос на ошибки + по одному лёгкому запросу на последний результат.
   let overview = {};
   try {
     overview = await getTestsOverview(allTests.map((t) => t.name));
@@ -148,6 +147,7 @@ function buildTestCard(container, test, index, info) {
   `;
 
   card.querySelector('.test-click-area').addEventListener('click', () => {
+    // Передаем пустой массив ошибок, так как это обычный запуск
     startQuiz(container, index, false, []);
   });
 
@@ -155,6 +155,7 @@ function buildTestCard(container, test, index, info) {
   if (reviewBtn) {
     reviewBtn.addEventListener('click', (e) => {
       e.stopPropagation();
+      // Передаем найденные ошибки для повторения
       startQuiz(container, index, true, mistakes);
     });
   }
@@ -162,21 +163,12 @@ function buildTestCard(container, test, index, info) {
   return card;
 }
 
-function startQuiz(container, testIndex, reviewMode = false) {
+// ДОБАВЛЕН 4-й АРГУМЕНТ mistakes
+async function startQuiz(container, testIndex, reviewMode = false, mistakes = []) {
   const test = allTests[testIndex];
-  currentTestName = test.name;
-  isReviewMode = reviewMode;
-  currentIndex = 0;
-  correctCount = 0;
-
-  const isMobile = window.innerWidth <= 768;
   
-  // ВОТ ЗДЕСЬ МЫ БЕРЕМ ВСЕ ВОПРОСЫ ИЗ ТЕСТА
-  let baseQuestions = test.questions;
-
-  if (isMobile) {
-    baseQuestions = baseQuestions.filter(q => q.qtype === 'choice' || q.qtype === 'match' || q.qtype === 'order');
-  }
+  // Используем вашу функцию visibleQuestions, чтобы отфильтровать вопросы для мобилок
+  let baseQuestions = visibleQuestions(test);
 
   if (baseQuestions.length === 0) {
     alert('Этот тест состоит только из заданий на ввод текста. Пожалуйста, используйте компьютер.');
@@ -184,28 +176,36 @@ function startQuiz(container, testIndex, reviewMode = false) {
   }
 
   if (reviewMode) {
-    getMistakes(test.name).then(mistakes => {
-      // Теперь baseQuestions доступна
-      currentQuestions = baseQuestions.filter(q => mistakes.includes(q.prompt));
-      
-      if (currentQuestions.length === 0) {
-        alert('Нет подходящих ошибок для повторения.');
-        renderTestList(container);
-        return;
-      }
-      showQuestion(container);
-    });
+    // ИСПОЛЬЗУЕМ ПЕРЕДАННЫЙ МАССИВ mistakes, а не вызываем несуществующую функцию
+    let reviewQuestions = baseQuestions.filter(q => mistakes.includes(q.prompt));
+    
+    if (reviewQuestions.length === 0) {
+      alert('Нет подходящих ошибок для повторения.');
+      renderTestList(container);
+      return;
+    }
+
+    // Инициализируем ваш объект session
+    session = {
+      container,
+      testName: test.name,
+      questions: reviewQuestions,
+      index: 0,
+      correct: 0,
+      review: true
+    };
+    
+    showQuestion();
   } else {
-    // 1. Разделяем вопросы на обязательные и обычные
+    // === ЛОГИКА С ОБЯЗАТЕЛЬНЫМИ ВОПРОСАМИ И ЛИМИТОМ ===
     const mandatoryQuestions = baseQuestions.filter(q => q.mandatory);
     const optionalQuestions = baseQuestions.filter(q => !q.mandatory);
     
-    // 2. Перемешиваем обычные вопросы
-    let shuffledOptional = [...optionalQuestions].sort(() => Math.random() - 0.5);
-    
-    // 3. Формируем итоговый список
+    // Перемешиваем только необязательные вопросы
+    let shuffledOptional = shuffle(optionalQuestions);
     let selectedQuestions = [...mandatoryQuestions];
     
+    // Применяем лимит
     if (test.limit && test.limit > 0) {
       const needed = test.limit - mandatoryQuestions.length;
       if (needed > 0) {
@@ -215,9 +215,17 @@ function startQuiz(container, testIndex, reviewMode = false) {
       selectedQuestions = selectedQuestions.concat(shuffledOptional);
     }
     
-    // 4. Финальное перемешивание
-    currentQuestions = selectedQuestions.sort(() => Math.random() - 0.5);
-    showQuestion(container);
+    // Инициализируем ваш объект session
+    session = {
+      container,
+      testName: test.name,
+      questions: shuffle(selectedQuestions), // Финальное перемешивание всего списка
+      index: 0,
+      correct: 0,
+      review: false
+    };
+    
+    showQuestion();
   }
 }
 
@@ -261,8 +269,6 @@ function showQuestion() {
   const feedback = root.querySelector('#feedback');
   const abortBtn = root.querySelector('#abortBtn');
 
-  // Единый флаг на вопрос: без него повторный клик по варианту
-  // начислял второй балл и повторно писал в базу.
   let answered = false;
 
   const finish = (isCorrect, correctText = '') => {
@@ -302,7 +308,6 @@ function showQuestion() {
       btn.textContent = opt;
       btn.addEventListener('click', () => {
         if (answered) return;
-        // Блокируем все варианты сразу: клик по второму больше не считается.
         answerArea.querySelectorAll('.opt').forEach((b) => { b.disabled = true; });
         const isCorrect = opt === correctText;
         if (isCorrect) {
@@ -422,8 +427,6 @@ function showQuestion() {
         poolBox.appendChild(b);
       });
 
-      // Раньше ответ проверялся автоматически на последнем слове:
-      // одно неверное нажатие сразу завершало вопрос без возможности исправить.
       checkBtn.disabled = answered || picked.length !== pool.length;
     }
 
@@ -529,8 +532,6 @@ function showQuestion() {
     let errors = 0;
     const total = pairs.length;
 
-    // Сопоставляем по тексту правой части, а не по индексу:
-    // в данных встречаются пары с одинаковым переводом (星期天/星期日).
     shuffle(pairs.map((pair, i) => ({ text: pair[0], id: i }))).forEach((left) => {
       const btn = document.createElement('button');
       btn.type = 'button';
