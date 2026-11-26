@@ -168,7 +168,7 @@
         "fill_answers": []
       },
       {
-        "prompt": "现在几点？ {{t:time:24}}",
+        "prompt": "现在几点？ {{t:time:12}}",
         "qtype": "input",
         "hint": "",
         "options": [],
@@ -179,7 +179,7 @@
         "fill_answers": []
       },
       {
-        "prompt": "现在几点？ {{t:time:24}}",
+        "prompt": "现在几点？ {{t:time:12}}",
         "qtype": "input",
         "hint": "",
         "options": [],
