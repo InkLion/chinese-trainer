@@ -145,27 +145,43 @@ function generateValue(type, params) {
     };
   }
 
-  // === НОВЫЙ БЛОК: МАТЕМАТИКА ===
+  // === НОВЫЙ БЛОК: ГЕНЕРАЦИЯ МАТЕМАТИКИ ===
   if (type === "math") {
-    const signs = { add: "+", sub: "-", mul: "×", div: "÷" };
-    const sign = signs[value.op] || "+";
+    const parts = (params || "").split(":");
+    const op = parts[0] || "add"; 
     
-    if (fmt === "q" || fmt === "eq") {
-      return `${value.n} ${sign} ${value.m}`;
-    }
-    if (fmt === "cn_eq") {
-      const cnSigns = { add: "加", sub: "减", mul: "乘以", div: "除以" };
-      const cnSign = cnSigns[value.op] || "加";
-      return `${toCnNumber(value.n)} ${cnSign} ${toCnNumber(value.m)}`;
-    }
+    let min1 = 1, max1 = 100, min2 = 1, max2 = 100;
     
-    // Жесткая проверка: если передан @cn (или ответ иероглифами)
-    if (fmt === "cn") {
-      return toCnNumber(value.result);
+    if (parts[1] && parts[1].includes("..")) {
+      const r = parts[1].split("..");
+      min1 = parseInt(r[0], 10);
+      max1 = parseInt(r[1], 10);
+      min2 = min1; max2 = max1; 
     }
-    
-    // Во всех остальных случаях по умолчанию тоже возвращаем цифры
-    return String(value.result);
+    if (parts[2] && parts[2].includes("..")) {
+      const r = parts[2].split("..");
+      min2 = parseInt(r[0], 10);
+      max2 = parseInt(r[1], 10);
+    }
+
+    let n = Math.floor(Math.random() * (max1 - min1 + 1)) + min1;
+    let m = Math.floor(Math.random() * (max2 - min2 + 1)) + min2;
+    let result = 0;
+
+    if (op === "add") result = n + m;
+    else if (op === "sub") {
+      if (m > n) { const temp = n; n = m; m = temp; }
+      result = n - m;
+    }
+    else if (op === "mul") result = n * m;
+    else if (op === "div") {
+      m = m || 1; 
+      result = Math.floor(n / m); 
+      n = result * m; 
+    }
+
+    // Возвращаем объект с данными (числа и результат)
+    return { n, m, result, op };
   }
 
   return "";
@@ -210,7 +226,7 @@ function formatValue(value, type, fmt, params) {
     return formatTimeBasic(value.hour, value.minute, mode);
   }
 
-  // === НОВЫЙ БЛОК: МАТЕМАТИКА ===
+  // === НОВЫЙ БЛОК: ФОРМАТИРОВАНИЕ МАТЕМАТИКИ ===
   if (type === "math") {
     const signs = { add: "+", sub: "-", mul: "×", div: "÷" };
     const sign = signs[value.op] || "+";
@@ -223,9 +239,13 @@ function formatValue(value, type, fmt, params) {
       const cnSign = cnSigns[value.op] || "加";
       return `${toCnNumber(value.n)} ${cnSign} ${toCnNumber(value.m)}`;
     }
+    
+    // Возвращает ответ иероглифами (十六)
     if (fmt === "cn") {
       return toCnNumber(value.result);
     }
+    
+    // Возвращает ответ цифрами (16)
     return String(value.result);
   }
 
