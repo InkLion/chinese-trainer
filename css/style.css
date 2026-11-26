@@ -88,6 +88,30 @@ button.primary { background: var(--primary-btn); border: 1px solid var(--primary
 .fill-input, select, input[type="text"] { width: 100%; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; }
 .fill-input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 2px var(--gold-glow); }
 
+/* =========================================================
+   УТИЛИТЫ
+   ========================================================= */
+/* .hidden используется в js-модулях как переключатель видимости.
+   Без этого правила «Далее» и «Проверить» были видны до ответа,
+   а в игре-заготовке не скрывались бы целые экраны. */
+.hidden,
+[hidden] {
+  display: none !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ГЛАВНАЯ */
 .menu-card { display: flex; flex-direction: column; align-items: center; padding: 2.5rem 1.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1.5rem; text-align: center; transition: all 0.3s; }
 .menu-card:hover { background: var(--gold-glow); border-color: var(--gold); transform: translateY(-5px); box-shadow: var(--shadow-md); }
@@ -300,6 +324,8 @@ body.flashcards-active { overflow: hidden !important; }
   margin-bottom: 1.5rem; 
   font-weight: 600; 
   color: var(--text-main);
+  /* В промптах тестов переводы строк разделяют условие и сам текст */
+  white-space: pre-line;
 }
 .q-text b { color: var(--gold); }
 
@@ -337,223 +363,102 @@ body.flashcards-active { overflow: hidden !important; }
   color: var(--danger); 
 }
 
+.opt:disabled {
+  cursor: default;
+  transform: none;
+}
+
 /* =========================================================
-   СБОРКА ПРЕДЛОЖЕНИЙ (Тип order)
+   ТЕСТЫ: ПОДСКАЗКА, СБОРКА ПРЕДЛОЖЕНИЯ, ПРОПУСКИ
    ========================================================= */
 
-/* Верхний блок, куда мы собираем предложение */
-.order-answer {
-  min-height: 4.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-  padding: 1rem;
-  border: 2px dashed var(--border-color);
-  border-radius: 1rem;
-  margin-bottom: 1.5rem; /* Отделяем от пула слов */
+/* Раскрывающаяся подсказка к вопросу */
+.hint-box {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 1rem;
   background: var(--bg-card);
-  transition: border-color 0.3s;
-}
-
-/* Подсветка рамки, если в блоке уже есть слова */
-.order-answer:has(.word-chip) {
-  border-style: solid;
-  border-color: var(--gold);
-}
-
-/* Подсказка внутри пустого поля */
-.order-hint {
-  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
   font-size: 0.95rem;
-  font-style: italic;
-  width: 100%;
-  text-align: center;
+  color: var(--text-muted);
 }
+.hint-box summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--gold);
+  outline: none;
+}
+.hint-box[open] summary { margin-bottom: 0.5rem; }
 
-/* Нижний блок с доступными словами */
+/* Сборка предложения из слов */
+.order-answer,
 .order-pool {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
   gap: 0.5rem;
-  margin-bottom: 2rem;
-  padding: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px dashed var(--border-color);
+}
+.order-pool {
+  margin-top: 0.75rem;
+  border-style: solid;
+  background: var(--bg-card);
+}
+.order-hint {
+  font-size: 0.95rem;
+  color: var(--text-muted);
 }
 
-/* Стили для самих кликабельных слов */
 .word-chip {
   padding: 0.5rem 1rem;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  line-height: 1.2;
   background: var(--bg-hover);
   border: 1px solid var(--border-color);
-  border-radius: 0.5rem;
+  border-radius: 2rem;
   color: var(--text-main);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  font-family: inherit;
 }
-
-.word-chip:hover {
+.word-chip:hover:not(:disabled) {
   background: var(--gold-glow);
   border-color: var(--gold);
-  transform: translateY(-2px);
+}
+.word-chip:disabled { opacity: 0.6; }
+
+/* Маркер пропуска в тексте задания (используется в tasks.js/game) */
+.blank {
+  display: inline-block;
+  min-width: 3rem;
+  border-bottom: 2px solid var(--gold);
 }
 
-.word-chip:active {
-  transform: translateY(0);
-}
-
-/* =========================================================
-   ДИАЛОГИ (ЧАТ)
-   ========================================================= */
-.chat-container {
-  max-width: 600px;
-  margin: 0 auto;
-  height: calc(100vh - 120px); /* Под шапку */
-  display: flex;
-  flex-direction: column;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-color);
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.chat-header {
-  display: flex;
-  align-items: center;
-  padding: 15px 20px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.chat-messages {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: var(--bg-body);
-}
-
-/* Пузыри сообщений */
-.chat-bubble {
-  max-width: 80%;
-  padding: 12px 16px;
-  border-radius: 1rem;
-  font-size: 1.1rem;
-  position: relative;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.9) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.chat-bubble.bot {
-  align-self: flex-start;
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-bottom-left-radius: 4px;
-}
-
-.chat-bubble.user {
-  align-self: flex-end;
+/* Кнопка «Повторить ошибки» на карточке теста */
+.review-btn-small {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 2rem;
   background: var(--gold-glow);
   border: 1px solid var(--gold);
   color: var(--gold);
-  border-bottom-right-radius: 4px;
-  font-weight: 600;
+  white-space: nowrap;
 }
-
-.chat-bubble.user.wrong {
-  background: rgba(230, 57, 70, 0.2);
-  border-color: var(--danger);
-  color: var(--danger);
-}
-
-/* Анимация печати (три точки) */
-.chat-bubble.typing {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  padding: 16px;
-  width: fit-content;
-}
-.chat-bubble.typing span {
-  width: 6px; height: 6px;
-  background: var(--text-muted);
-  border-radius: 50%;
-  animation: bounce 1.4s infinite ease-in-out both;
-}
-.chat-bubble.typing span:nth-child(1) { animation-delay: -0.32s; }
-.chat-bubble.typing span:nth-child(2) { animation-delay: -0.16s; }
-
-@keyframes bounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
-}
-
-/* Панель с вариантами ответов */
-.chat-options {
-  padding: 15px;
-  background: var(--bg-card);
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 40vh;
-  overflow-y: auto;
-}
-
-.chat-option-btn {
-  text-align: left;
-  padding: 12px 16px;
-  background: var(--bg-hover);
-  border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
-  color: var(--text-main);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.chat-option-btn:hover {
-  background: var(--gold-glow);
-  border-color: var(--gold);
-  transform: translateX(5px);
-}
-
-/* Мобильная адаптация для чата */
-@media (max-width: 768px) {
-  .chat-container {
-    height: calc(100dvh - 140px);
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
-  }
-  .chat-bubble { max-width: 90%; }
-}
-
-/* =========================================================
-   СТИЛИЗАЦИЯ СКРОЛЛБАРА
-   ========================================================= */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
+.review-btn-small:hover:not(:disabled) {
   background: var(--gold);
+  color: var(--primary-btn-text);
+}
+
+/* Строка с подзаголовком на страницах */
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+/* Служебный контейнер сообщений под вопросом */
+.feedback {
+  min-height: 1.5rem;
+  font-weight: 700;
 }

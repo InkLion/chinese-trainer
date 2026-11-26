@@ -1,29 +1,26 @@
 import { init as testsInit } from './modules/tests.js';
 import { init as jeopardyInit } from './modules/jeopardy.js';
 import { init as profileInit } from './modules/profile.js';
-import { getCurrentUser, logout } from './core/storage.js';
+import { getCurrentUser, logout, clearCurrentUser, watchAuthState } from './core/storage.js';
 import { init as flashcardsInit } from './modules/flashcards.js';
 import { init as settingsInit } from './modules/settings.js';
 import { initFeedbackWidget } from './core/feedback.js';
-import { init as dialoguesInit } from './modules/dialogues.js';
+import { applySavedSettings } from './core/theme.js';
+import { escapeHtml } from './core/utils.js';
 
-const savedTheme = localStorage.getItem('theme') || 'dark';
-const savedFontSize = localStorage.getItem('fontSize') || '16';
-document.documentElement.setAttribute('data-theme', savedTheme);
-document.documentElement.style.fontSize = savedFontSize + 'px';
+applySavedSettings();
 
 const app = document.getElementById('app');
 const nav = document.getElementById('app-nav');
 const header = document.querySelector('.app-header');
 
 const routes = {
-  '':         homeView,
-  'login':    profileInit,
-  'tests':    testsInit,
-  'jeopardy': jeopardyInit,
+  '':          homeView,
+  'login':     profileInit,
+  'tests':     testsInit,
+  'jeopardy':  jeopardyInit,
   'flashcards': flashcardsInit,
-  'settings': settingsInit,
-  'dialogues':  dialoguesInit,
+  'settings':  settingsInit
 };
 
 let currentCleanup = null;
@@ -38,7 +35,8 @@ function getGreeting() {
 }
 
 function homeView(container) {
-  const user = getCurrentUser();
+  const user = getCurrentUser() || '';
+  const safeUser = escapeHtml(user);
   const greeting = getGreeting();
 
   container.innerHTML = `
@@ -47,7 +45,7 @@ function homeView(container) {
       <!-- Верхняя панель с профилем (всегда наверху, ничего не перекрывает) -->
       <div style="display: flex; justify-content: flex-end; width: 100%; margin-bottom: 20px;">
         <div class="home-profile-box" style="display: flex; align-items: center; gap: 10px; background: var(--bg-panel); padding: 8px 12px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-          <span style="color: var(--gold); font-weight: bold;">👤 ${user}</span>
+          <span style="color: var(--gold); font-weight: bold;">👤 ${safeUser}</span>
           
           <a href="#/settings" class="profile-btn" title="Настройки" style="padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--bg-hover); border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 5px;">
             ⚙️ <span class="settings-text">Настройки</span>
@@ -66,7 +64,7 @@ function homeView(container) {
         </div>
 
         <h2 style="font-size: 28px; margin-bottom: 50px; font-weight: 400; text-align: center; color: var(--text-main);">
-          ${greeting}, <span style="color: var(--gold); font-weight: 800;">${user}</span>!
+          ${greeting}, <span style="color: var(--gold); font-weight: 800;">${safeUser}</span>!
         </h2>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; width: 100%; max-width: 800px;">
@@ -85,21 +83,45 @@ function homeView(container) {
             <div>Карточки</div>
             <div>Запоминание слов с помощью флеш-карточек</div>
           </a>
-          <a href="#/dialogues" class="menu-card">
-            <div>💬</div>
-            <div>Диалоги</div>
-            <div>Тренировка реальных фраз в формате чата</div>
+          <a href="#" class="menu-card" style="opacity: 0.5; cursor: not-allowed;" data-wip="1">
+            <div style="filter: grayscale(1);">✍️</div>
+            <div>Прописи</div>
+            <div>Рукописный ввод иероглифов</div>
           </a>
         </div>
       </div>
     </div>
   `;
 
-  document.getElementById('logoutBtnHome').addEventListener('click', () => {
-    logout();
-    window.location.hash = '#/login';
-    window.location.reload();
-  });
+  // Инлайн-обработчик заменён на обычный listener: меньше сюрпризов с CSP.
+  const wip = container.querySelector('[data-wip]');
+  if (wip) {
+    wip.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Этот раздел находится в разработке! 🚧');
+    });
+  }
+
+  const logoutBtn = container.querySelector('#logoutBtnHome');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      // Кнопка блокируется, чтобы повторный клик не запускал второй выход.
+      logoutBtn.disabled = true;
+      await logout();
+      if (location.hash === '#/login') route();
+      else window.location.hash = '#/login';
+    });
+  }
+}
+
+function renderError(container, error) {
+  container.innerHTML = `
+    <div class="card" style="max-width: 600px; margin: 40px auto; text-align: center;">
+      <h2 style="color: var(--danger); margin-bottom: 10px;">Что-то пошло не так</h2>
+      <p style="color: var(--text-muted);">Не удалось открыть раздел. Попробуйте обновить страницу.</p>
+      <p style="color: var(--text-muted); font-size: 13px;">${escapeHtml(error?.message || error || '')}</p>
+    </div>
+  `;
 }
 
 async function route() {
@@ -114,13 +136,10 @@ async function route() {
   }
 
   // Скрываем шапку на логине и на главной
-  if (name === 'login' || name === '') {
-    if (header) header.style.display = 'none';
-  } else {
-    if (header) header.style.display = 'flex';
-    
-    // Подсветка активной вкладки в меню
-    [...nav.querySelectorAll('a')].forEach(a => {
+  if (header) header.style.display = (name === 'login' || name === '') ? 'none' : 'flex';
+
+  if (nav && name !== 'login' && name !== '') {
+    [...nav.querySelectorAll('a')].forEach((a) => {
       a.classList.toggle('active', a.getAttribute('href') === '#/' + name);
     });
   }
@@ -134,15 +153,18 @@ async function route() {
   app.replaceChildren(container);
 
   const view = routes[name] || homeView;
-  
+
   let result;
   try {
     result = await view(container);
   } catch (e) {
     console.error(e);
+    if (myId === navId) renderError(container, e);
   }
 
   if (myId !== navId) {
+    // Пока вью ждала данные, пользователь ушёл в другой раздел:
+    // отдаём ей шанс освободить ресурсы.
     if (typeof result === 'function') {
       try { result(); } catch (e) { console.error(e); }
     }
@@ -150,7 +172,28 @@ async function route() {
   }
 
   currentCleanup = typeof result === 'function' ? result : null;
+
+  // Долгая загрузка могла оставить прокрутку с предыдущей страницы.
+  window.scrollTo(0, 0);
+}
+
+/**
+ * Внешний выход/истечение сессии: убираем локальный флаг и уходим на логин,
+ * иначе интерфейс выглядит «залогиненным», а данные молча пустые.
+ */
+function handleSignedOut() {
+  if (!getCurrentUser()) return;
+  clearCurrentUser();
+  if (location.hash === '#/login') {
+    route();
+  } else {
+    window.location.hash = '#/login';
+  }
 }
 
 window.addEventListener('hashchange', () => setTimeout(route, 0));
-window.addEventListener('DOMContentLoaded', () => {setTimeout(route, 0); initFeedbackWidget();});
+window.addEventListener('DOMContentLoaded', () => {
+  watchAuthState(handleSignedOut);
+  setTimeout(route, 0);
+  initFeedbackWidget();
+});

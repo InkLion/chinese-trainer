@@ -3,131 +3,206 @@ import { supabase } from './supabase.js';
 
 const USER_KEY = 'hsk_current_user';
 
+/**
+ * Ошибки Supabase раньше игнорировались полностью: пользователь видел
+ * «пустую статистику» вместо сообщения о проблеме. Теперь они хотя бы
+ * попадают в консоль с понятным префиксом.
+ */
+function logError(scope, error) {
+  if (!error) return;
+  console.error(`[storage:${scope}]`, error.message || error);
+}
+
+/**
+ * Идентификатор пользователя из уже загруженной сессии.
+ * getSession() читает localStorage и не делает сетевой запрос,
+ * в отличие от getUser(), который раньше вызывался по 2 раза на каждый тест.
+ * @returns {Promise<string|null>}
+ */
+async function currentUserId() {
+  try {
+    const { data, error } = await supabase.auth.getSession();
+    logError('getSession', error);
+    return data?.session?.user?.id || null;
+  } catch (e) {
+    logError('getSession', e);
+    return null;
+  }
+}
+
 // === УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЕМ ===
 export function getCurrentUser() {
-  return localStorage.getItem(USER_KEY);
+  try {
+    return localStorage.getItem(USER_KEY);
+  } catch (e) {
+    return null;
+  }
 }
 
 export function setCurrentUser(name) {
-  localStorage.setItem(USER_KEY, name.trim());
+  try {
+    localStorage.setItem(USER_KEY, String(name).trim());
+  } catch (e) {
+    logError('setCurrentUser', e);
+  }
+}
+
+export function clearCurrentUser() {
+  try {
+    localStorage.removeItem(USER_KEY);
+  } catch (e) {
+    logError('clearCurrentUser', e);
+  }
 }
 
 export async function logout() {
-  localStorage.removeItem(USER_KEY);
-  await supabase.auth.signOut(); // Выход из Supabase
+  // Сначала локальный флаг: даже если сеть недоступна, UI разлогинится.
+  clearCurrentUser();
+  try {
+    const { error } = await supabase.auth.signOut();
+    logError('signOut', error);
+  } catch (e) {
+    logError('signOut', e);
+  }
 }
 
-export async function getAllUsers() {
-  const { data } = await supabase.from('profiles').select('username');
-  return (data || []).map(d => d.username);
+/**
+ * Следит за состоянием авторизации Supabase.
+ * Нужно, чтобы истёкшая/отозванная сессия выкидывала пользователя на логин,
+ * а не оставляла «залогиненный» интерфейс с молча пустыми данными.
+ * @param {() => void} onSignedOut
+ * @returns {() => void} отписка
+ */
+export function watchAuthState(onSignedOut) {
+  try {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_OUT') onSignedOut();
+    });
+    return () => {
+      try {
+        data?.subscription?.unsubscribe?.();
+      } catch (e) {
+        /* no-op */
+      }
+    };
+  } catch (e) {
+    logError('onAuthStateChange', e);
+    return () => {};
+  }
 }
 
 // === РАБОТА С ДАННЫМИ ===
 export async function addStat(testName, correct, total) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+  const userId = await currentUserId();
+  if (!userId) return;
 
-  // Теперь пишем в новую таблицу test_stats
-  await supabase.from('test_stats').insert({
-    user_id: user.id,
+  const { error } = await supabase.from('test_stats').insert({
+    user_id: userId,
     test_name: testName,
     correct_answers: correct,
     total_questions: total
   });
+  logError('addStat', error);
 }
 
-export async function getStats(testName) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
+/**
+ * Сводка по списку тестов одним проходом: ошибки и последний результат.
+ * Раньше renderTestList делал по 2 запроса на тест, и каждый из них
+ * дополнительно ходил в auth.getUser() — до 40 HTTP-запросов на экран.
+ * @param {string[]} testNames
+ * @returns {Promise<Record<string, {mistakes: string[], lastStat: {correct: number, total: number, date: string}|null}>>}
+ */
+export async function getTestsOverview(testNames = []) {
+  const names = [...new Set((testNames || []).filter(Boolean))];
+  /** @type {Record<string, {mistakes: string[], lastStat: any}>} */
+  const result = {};
+  names.forEach((n) => {
+    result[n] = { mistakes: [], lastStat: null };
+  });
+  if (!names.length) return result;
 
-  const { data } = await supabase
-    .from('test_stats') // Читаем из новой таблицы
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('test_name', testName)
-    .order('created_at', { ascending: false });
+  const userId = await currentUserId();
+  if (!userId) return result;
 
-  return (data || []).map(d => ({
-    date: d.created_at,
-    correct: d.correct_answers,
-    total: d.total_questions
-  }));
+  const [progressRes, statsRes] = await Promise.all([
+    supabase
+      .from('user_progress')
+      .select('test_name, question_id')
+      .eq('user_id', userId)
+      .eq('is_correct', false)
+      .neq('question_id', 'STATS')
+      .in('test_name', names),
+    // По одному самому свежему результату на тест: полную историю тянуть незачем.
+    Promise.all(names.map(async (name) => {
+      const { data, error } = await supabase
+        .from('test_stats')
+        .select('correct_answers, total_questions, created_at')
+        .eq('user_id', userId)
+        .eq('test_name', name)
+        .order('created_at', { ascending: false })
+        .limit(1);
+      logError('getTestsOverview:stat', error);
+      return [name, data?.[0] || null];
+    }))
+  ]);
+
+  logError('getTestsOverview:progress', progressRes.error);
+  (progressRes.data || []).forEach((row) => {
+    const bucket = result[row.test_name];
+    if (!bucket) return;
+    // Дедупликация на клиенте остаётся, но теперь это дёшево: один запрос.
+    if (!bucket.mistakes.includes(row.question_id)) bucket.mistakes.push(row.question_id);
+  });
+
+  statsRes.forEach(([name, row]) => {
+    const bucket = result[name];
+    if (!bucket || !row) return;
+    bucket.lastStat = {
+      correct: row.correct_answers,
+      total: row.total_questions,
+      date: row.created_at
+    };
+  });
+
+  return result;
 }
 
 export async function addMistake(testName, prompt) {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      console.error("Ошибка: Пользователь не авторизован для сохранения ошибки.");
-      return;
-    }
+  const userId = await currentUserId();
+  if (!userId) return;
 
-    // Проверяем, нет ли уже такой ошибки
-    const { data: existing, error: selectErr } = await supabase
-      .from('user_progress')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('test_name', testName)
-      .eq('question_id', prompt)
-      .eq('is_correct', false)
-      .limit(1);
+  // Проверка «уже есть?» + вставка не атомарны: гонка возможна, если
+  // в user_progress нет уникального индекса (user_id, test_name, question_id).
+  const { data: existing, error: selectError } = await supabase
+    .from('user_progress')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('test_name', testName)
+    .eq('question_id', prompt)
+    .eq('is_correct', false)
+    .limit(1);
+  logError('addMistake:select', selectError);
 
-    if (selectErr) {
-      console.error("Ошибка при проверке существующих ошибок:", selectErr);
-      return;
-    }
+  if (existing && existing.length > 0) return;
 
-    // Если ошибки нет, добавляем
-    if (!existing || existing.length === 0) {
-      const { error: insertErr } = await supabase.from('user_progress').insert({
-        user_id: user.id,
-        test_name: testName,
-        question_id: prompt,
-        is_correct: false
-      });
-
-      if (insertErr) {
-        console.error("ОШИБКА БАЗЫ ДАННЫХ при добавлении ошибки:", insertErr);
-      } else {
-        console.log("✅ Ошибка успешно сохранена в базу:", prompt);
-      }
-    }
-  } catch (e) {
-    console.error("Критическая ошибка в addMistake:", e);
-  }
+  const { error } = await supabase.from('user_progress').insert({
+    user_id: userId,
+    test_name: testName,
+    question_id: prompt,
+    is_correct: false
+  });
+  logError('addMistake:insert', error);
 }
 
 export async function removeMistake(testName, prompt) {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  const userId = await currentUserId();
+  if (!userId) return;
 
-    const { error } = await supabase
-      .from('user_progress')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('test_name', testName)
-      .eq('question_id', prompt);
-
-    if (error) console.error("ОШИБКА БАЗЫ ДАННЫХ при удалении ошибки:", error);
-  } catch (e) {
-    console.error("Критическая ошибка в removeMistake:", e);
-  }
-}
-
-export async function getMistakes(testName) {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
-
-  const { data } = await supabase
+  const { error } = await supabase
     .from('user_progress')
-    .select('question_id')
-    .eq('user_id', user.id)
+    .delete()
+    .eq('user_id', userId)
     .eq('test_name', testName)
-    .eq('is_correct', false)
-    .neq('question_id', 'STATS'); // <-- ВАЖНО: Исключаем служебную запись STATS из списка ошибок!
-
-  // Убираем дубликаты на всякий случай
-  const uniqueMistakes = [...new Set((data || []).map(d => d.question_id))];
-  return uniqueMistakes;
+    .eq('question_id', prompt);
+  logError('removeMistake', error);
 }
