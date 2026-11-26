@@ -1,5 +1,11 @@
 /* =========================================================
    tasks.js — банк заданий по личным конспектам
+
+   Формат задания choice/image:
+     answer  — правильный ответ (отдельным полем);
+     options — ТОЛЬКО неправильные варианты (дистракторы).
+   Викторина показывает [answer, ...options], поэтому ответ
+   в options дублировать нельзя.
    ========================================================= */
 
 export const TOPICS = {
@@ -289,7 +295,17 @@ function numToChinese(num) {
     }
     return res;
   }
-  return '千';
+  if (num < 10000) {
+    const thousands = Math.floor(num / 1000);
+    const rest = num % 1000;
+    let res = cnDigits[thousands] + '千';
+    if (rest > 0) {
+      res += rest < 100 ? '零' + numToChinese(rest) : numToChinese(rest);
+    }
+    return res;
+  }
+  // Раньше любое число ≥ 1000 превращалось в «千».
+  return String(num);
 }
 
 function genNumbers() {
@@ -357,7 +373,7 @@ function genDates() {
   for (let i = 0; i < 20; i++) {
     const month = Math.floor(Math.random() * 12) + 1;
     const day = Math.floor(Math.random() * 28) + 1;
-    const cnMonth = (month === 1) ? '一' : numToChinese(month);
+    const cnMonth = numToChinese(month);
     const cnDay = numToChinese(day);
     const cn = `${cnMonth}月${cnDay}日`;
     const dateStr = `${day} ${ruMonths[month - 1]}`;
